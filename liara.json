@@ -1,0 +1,18 @@
+{
+  "netcore": {
+    "version": "9.0",
+    "finalDllName": "Coreapi.Api",
+    "csprojectFile": "Src/Api/Api.csproj"
+  },
+  "dotnet": {
+    "version": "9.0",
+    "finalDllName": "Coreapi.Api",
+    "csprojectFile": "Src/Api/Api.csproj"
+  },
+  "disks": [
+    {
+      "name": "uploads",
+      "mountTo": "Upload"
+    }
+  ]
+}

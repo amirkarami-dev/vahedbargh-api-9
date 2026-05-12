@@ -1,0 +1,37 @@
+stages:
+  - triggers
+
+Run_Alpha:
+  stage: triggers
+  trigger:
+    include: config-cicd/cicd-a/.gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "alpha"'
+
+Run_Beta:
+  stage: triggers
+  trigger:
+    include: config-cicd/cicd-b/.gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "beta"'
+
+Run_Test:
+  stage: triggers
+  trigger:
+    include: config-cicd/cicd-t/.gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "test"'
+
+Run_Demo:
+  stage: triggers
+  trigger:
+    include: config-cicd/cicd-d/.gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "demo"'
+
+Run_Prod:
+  stage: triggers
+  trigger:
+    include: config-cicd/cicd-p/.gitlab-ci.yml
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "prod"'

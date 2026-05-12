@@ -1,0 +1,59 @@
+services:
+  elec-unit-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: elec-unit-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionString=Server=185.252.28.170,2019;Initial Catalog=vahedbargh_test;User ID=vahedbargh_admin;Password=P@33word@123;TrustServerCertificate=true;
+
+      # S3 Configuration
+      - ConfigS3__ENDPOINT=https://storage.iran.liara.space
+      - ConfigS3__BUCKET_NAME=vahedbarghfile
+      - ConfigS3__ACCESS_KEY=aqfrphouqkkod7f1
+      - ConfigS3__SECRET_KEY=14c144d8-8ad4-4f4a-a74f-92ca1aff96bd
+
+      # BMI Merchant Configuration
+      - BMIMerchant__TerminalId=09101173
+      - BMIMerchant__AcceptorId=992190009101173
+      - BMIMerchant__PassPhrase=57A5F200F5AFCD88
+      - BMIMerchant__PaymentMelliCallBackUrl=https://api.kurdnezambargh.ir/api/v1.0/Transactions/PaymentMelliReturn
+      - BMIMerchant__PaymentMelliCallBackPublicUrl=https://api.kurdnezambargh.ir/api/v1.0/Transactions/PaymentMelliPublicReturn
+      - BMIMerchant__RefererUrl=http://api.kurdnezambargh.ir
+      - BMIMerchant__VerifyBankUrl=https://ikc.shaparak.ir/api/v3/confirmation/purchase
+      - BMIMerchant__VerifyBankSingleUrl=https://ikc.shaparak.ir/api/v3/inquiry/single
+      - BMIMerchant__rsaPublicKey=-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDD7Ijz5GZ66PRW8zfB1Zx0IHwo\nOoVrMytae4hFOxjxy1CnXCMkYTGljAcs4taeLse46TjNGv0SZabn7Acf7ji8qI4c\nP6xVVZwlycL2vaH8xAqWFGwvur3XbhCfSQ3f7rnOKBKFJA29x4Efj47z1bfXc72o\nZGzpXfLrW7Xvnx8NRQIDAQAB\n-----END PUBLIC KEY-----
+
+      # SMS Service Configuration
+      - SMSService__Provider=5
+
+      # Metabase Configuration
+      - Metabase__SiteUrl=https://report.myceo.ir
+      - Metabase__SecretKey=d37c97bf31f2cb45970fbcceb3b5655ae2d47a758fc8e3138c0a2d65cb26bd98
+
+      - JsReportUrl=http://jsreport:5488
+      - S3Environment=Production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.elec-unit-api.rule=Host(`api.kurdnezambargh2.ir`)"
+      - "traefik.http.routers.elec-unit-api.entrypoints=websecure"
+      - "traefik.http.routers.elec-unit-api.tls.certresolver=myresolver"
+      - "traefik.http.services.elec-unit-api.loadbalancer.server.port=80"
+      - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH"
+      - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolalloworiginlist=https://api.kurdnezambargh2.ir,http://api.kurdnezambargh2.ir,https://kurdnezambargh2.ir,http://kurdnezambargh2.ir"
+      - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.elec-unit-api-cors.headers.addvaryheader=true"
+      - "traefik.http.routers.elec-unit-api.middlewares=elec-unit-api-cors"
+    volumes:
+      - ./uploads:/app/Upload
+      - ./logs:/app/logs
+    networks:
+      - traefik
+    restart: unless-stopped
+
+networks:
+  traefik:
+    external: true

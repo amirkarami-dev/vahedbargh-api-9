@@ -1,0 +1,24 @@
+﻿using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublicReturn
+{
+    public class PaymentMelliPublicReturnCommand : IRequest<string>
+    {
+        public string Token { get; set; }
+        public string AcceptorId { get; set; }
+        public string ResponseCode { get; set; }
+        public string PaymentId { get; set; }
+        public string MaskedPan { get; set; }
+        public string Sha256OfPan { get; set; }
+        public string RequestId { get; set; }
+        public string RetrievalReferenceNumber { get; set; }
+        public string SystemTraceAuditNumber { get; set; }
+        public string Amount { get; set; }
+
+    }
+}
