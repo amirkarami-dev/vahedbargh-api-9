@@ -51,5 +51,8 @@ namespace Coreapi.Infrastructure.Identity
         public string NaCode { get; set; }
         public bool IsAdminSupport { get; set; } = false;
 
+        [StringLength(50)]
+        public string BaleId { get; set; }
+
     }
 }

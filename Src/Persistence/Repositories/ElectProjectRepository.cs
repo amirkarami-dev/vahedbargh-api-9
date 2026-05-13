@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Coreapi.Common.Enums;
@@ -62,6 +63,13 @@ public class ElectProjectRepository(CoreapiDbContext context)
             .Where(t => t.ProjectId == id.ToString() && t.TransactionStatus == TransactionStatusEnum.Out)
             .SumAsync(s => s.Amount);
        return projectBalanceIn - projectBalanceOut;
+    }
+
+    public async Task<List<ElectProjectFile>> GetFilesByFileNumber(long fileNumber)
+    {
+        return await context.ElectProjectFiles
+            .Where(f => f.ElectProject.FileNumber == fileNumber)
+            .ToListAsync();
     }
 
     public async Task<ElectProjectViewMainModel> GetElectProjectsFullFilter(Guid clientId,Guid? panelMakerId, int idSection,

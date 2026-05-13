@@ -3,6 +3,7 @@ using Coreapi.Application.Common.Models;
 using Coreapi.Domain.SeedWork;
 using Coreapi.Infrastructure.Audits;
 using Coreapi.Infrastructure.BackgroundServices;
+using Coreapi.Infrastructure.BaleBot;
 using Coreapi.Infrastructure.Identity;
 using Coreapi.Infrastructure.Notification;
 using Coreapi.Infrastructures.BackgroundServices.BackgroundTasks;
@@ -145,6 +146,20 @@ namespace Coreapi.Infrastructure
 
             services.AddHostedService<QueuedHostedService>();
             services.AddHostedService<AutoOutProcessBackgroundService>();
+
+            // Bale bot
+            var baleToken = configuration["BaleService:BotToken"];
+            if (!string.IsNullOrEmpty(baleToken))
+            {
+                services.AddHttpClient("BaleBot", client =>
+                {
+                    client.BaseAddress = new Uri($"https://tapi.bale.ai/bot{baleToken}/");
+                    client.Timeout = TimeSpan.FromSeconds(40);
+                });
+                services.AddSingleton<BaleConversationStateManager>();
+                services.AddScoped<IBaleService, BaleService>();
+                services.AddHostedService<BalePollingService>();
+            }
 
             //IHtmlSanitizer sanitizer = new HtmlSanitizer();
             //services.AddSingleton(sanitizer);
