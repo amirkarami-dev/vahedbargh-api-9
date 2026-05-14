@@ -16,5 +16,7 @@ public interface IElectProjectRepository:IRepository<ElectProject>
     Task<long> GetProjectBalance(Guid id);
     Task<ElectProjectViewMainModel> GetElectProjectsFullFilter(Guid clientId,Guid? panelMakerId, int idSection, ElectProjectsFullFilterModel filterModel);
     Task<List<ElectProjectFile>> GetFilesByFileNumber(long fileNumber);
+    Task<List<ElectProject>> GetElectProjectsByLandlordNaCode(string naCode);
+    Task<ElectProject?> GetElectProjectByElectRequestNumber(long electRequestNumber);
 
 }

@@ -4,14 +4,18 @@ namespace Coreapi.Infrastructure.BaleBot;
 
 public enum BaleConversationStage
 {
-    WaitingForUsername,
+    SelectingLoginType,        // /start → show کاربر / مالک buttons
+    WaitingForUsername,        // After clicking کاربر
     WaitingForPassword,
-    Authenticated
+    WaitingForLandlordNaCode,  // After clicking مالک
+    Authenticated,             // Login succeeded; role menu visible
+    WaitingForFileNumber,      // Expecting file-number text (all auth roles)
+    WaitingForElectRequestNum, // Expecting ElectRequestNumber text (admin roles)
 }
 
 public class BaleConversationState
 {
-    public BaleConversationStage Stage { get; set; } = BaleConversationStage.WaitingForUsername;
+    public BaleConversationStage Stage { get; set; } = BaleConversationStage.SelectingLoginType;
     public string? PendingUsername { get; set; }
 }
 

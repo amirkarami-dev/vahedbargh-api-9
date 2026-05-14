@@ -72,6 +72,21 @@ public class ElectProjectRepository(CoreapiDbContext context)
             .ToListAsync();
     }
 
+    public async Task<List<ElectProject>> GetElectProjectsByLandlordNaCode(string naCode)
+    {
+        return await context.ElectProjects
+            .Where(p => !p.IsDelete && p.LandlordNaCode == naCode)
+            .OrderByDescending(p => p.FileNumber)
+            .ToListAsync();
+    }
+
+    public async Task<ElectProject?> GetElectProjectByElectRequestNumber(long electRequestNumber)
+    {
+        return await context.ElectProjects
+            .Where(p => !p.IsDelete && p.ElectRequestNumber == electRequestNumber)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<ElectProjectViewMainModel> GetElectProjectsFullFilter(Guid clientId,Guid? panelMakerId, int idSection,
         ElectProjectsFullFilterModel filterModel)
     {
