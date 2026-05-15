@@ -52,7 +52,9 @@ namespace Coreapi.Api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> AddFile([FromForm] AddElectProjectFileCommand command) => Ok(await Mediator.Send(command));
+		[AllowAnonymous]
+
+		public async Task<IActionResult> AddFile([FromForm] AddElectProjectFileCommand command) => Ok(await Mediator.Send(command));
 
 
 

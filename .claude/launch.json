@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ASP.NET Core API",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["run", "--project", "Src/Api", "--launch-profile", "Api"],
+      "port": 5000
+    },
+    {
+      "name": "Docker Compose (full stack)",
+      "runtimeExecutable": "docker-compose",
+      "runtimeArgs": ["up"],
+      "port": 80
+    }
+  ]
+}

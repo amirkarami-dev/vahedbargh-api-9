@@ -21,11 +21,17 @@ namespace Coreapi.Persistence.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<ElectProjectFile>> GetByFileType(FileTypeEnum fileTypeEnum){
-			return await context.ElectProjectFiles
-				  .Where(c => c.FileTypeEnum == fileTypeEnum)
-				  .ToListAsync();
-		}
+        public async Task<IEnumerable<ElectProjectFile>> GetByFileType(FileTypeEnum fileTypeEnum)
+        {
+            return await context.ElectProjectFiles
+                .Where(c => c.FileTypeEnum == fileTypeEnum)
+                .ToListAsync();
+        }
 
-	}
+        public async Task<ElectProjectFile?> GetFileById(Guid id)
+        {
+            return await context.ElectProjectFiles
+                .FirstOrDefaultAsync(f => f.Id == id);
+        }
+    }
 }

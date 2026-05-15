@@ -12,5 +12,6 @@ namespace Coreapi.Domain.AggregatesModel.ElectProjectAgg
     {
         Task<IEnumerable<ElectProjectFile>> GetByIdElectProject(Guid electProjectId);
 		Task<IEnumerable<ElectProjectFile>> GetByFileType(FileTypeEnum fileTypeEnum);
+        Task<ElectProjectFile?> GetFileById(Guid id);
 	}
 }

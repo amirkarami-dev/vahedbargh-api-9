@@ -4,6 +4,7 @@ using Coreapi.Infrastructure.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Coreapi.Infrastructure.Migrations
 {
     [DbContext(typeof(IdentityAppDbContext))]
-    partial class IdentityAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260512181007_AddBaleIdToUser")]
+    partial class AddBaleIdToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
