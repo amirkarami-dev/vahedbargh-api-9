@@ -28,7 +28,6 @@ public class AmountSmsCommandHandler(
 
 		var amount = electProject.IsBigProject ? await transactionRepository.GetBigProjectBalance([.. electProject.ChildProjects.Select(s => s.Id.ToString())]) : await transactionRepository.GetProjectBalance(electProject.Id);
 
-        if(amount >= 0) throw new NotFoundException("بالانس پرونده صفر یا بیشتر می باشد");
 
         var amountForPay = Math.Abs(amount);
 
@@ -39,7 +38,9 @@ public class AmountSmsCommandHandler(
             // ارسال پیام واریزی به مالک
             case SmsTypeEnum.Payment:
             {
-                var param = $"e={encodeGuid}&a={amountForPay}";
+					if (amount >= 0) throw new NotFoundException("بالانس پرونده صفر یا بیشتر می باشد");
+
+					var param = $"e={encodeGuid}&a={amountForPay}";
                 await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 9593, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.Now),
 					//await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 16131, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.Now),
 					amountForPay.ToString("N0") + "ریال", param);

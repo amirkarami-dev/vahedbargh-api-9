@@ -324,27 +324,21 @@ namespace Coreapi.Common.Utility
         {
             var bytes = guid.ToByteArray();
 
-            var base64 = Convert.ToBase64String(bytes)
+            // Standard URL-safe Base64 without padding (22 chars for a 16-byte GUID).
+            // '+' → '-', '/' → '_', strip trailing "==".
+            return Convert.ToBase64String(bytes)
                 .Replace('+', '-')
                 .Replace('/', '_')
                 .Substring(0, 22);
-
-            // جلوگیری از تولید "--"
-            base64 = base64.Replace("--", "-~");
-
-            return base64;
         }
 
         public static Guid DecodeGuid(string value)
         {
-            // برگشت دادن escape special
-            value = value.Replace("-~", "--");
-
-            // برگشت تغییرات URL-safe
-            value = value.Replace('-', '+').Replace('_', '/');
-
-            // افزودن padding
-            value += "==";
+            // Reverse URL-safe substitutions, re-add the two stripped padding chars.
+            value = value
+                .Replace('-', '+')
+                .Replace('_', '/')
+                + "==";
 
             var bytes = Convert.FromBase64String(value);
             return new Guid(bytes);
