@@ -458,8 +458,14 @@ public class EppApprovedCommandHandler(
             }
 
 
-            electProject.UpdateProjectLevel(ProjectLevelEnum.ApproveErtStage);
-            projectProcess.UpdateDoneErtStage(DateTime.Now.Date, Helper.MiladiToShamsi(DateTime.Now.Date), request.Des);
+            if(electProject.IsBuildingInspection){
+				electProject.UpdateProjectLevel(ProjectLevelEnum.ApproveErtStage);
+			}
+            else{
+				electProject.UpdateProjectLevel(ProjectLevelEnum.ApproveStage);
+			}
+
+			projectProcess.UpdateDoneErtStage(DateTime.Now.Date, Helper.MiladiToShamsi(DateTime.Now.Date), request.Des);
             // اساین کردن فاکتور به پروسس
             //invoiceErtProject.UpdateElectProjectProcess(projectProcess);
 
