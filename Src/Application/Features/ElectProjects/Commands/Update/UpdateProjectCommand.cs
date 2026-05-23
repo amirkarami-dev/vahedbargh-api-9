@@ -36,6 +36,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
         public bool HasRelatedPermit { get; set; }
         public bool HasSupervision { get; set; }
         public int AreaAsBuilt { get; set; }
+        public int ChildInspectionCount { get; set; }
+        public int ChildErtCount { get; set; }
 
     }
 }
