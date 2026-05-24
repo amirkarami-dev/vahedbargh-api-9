@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,6 +17,12 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.CreateBigProjectCh
 /// Supports both inspection children and ERT children.
 /// Pre-cleanup: deletes any existing children (with their invoices and transactions)
 /// before creating new ones — safe to call idempotently.
+/// After child creation:
+///   1. Updates electProject.AmountPerArea to the final payWithSms total.
+///   2. If the parent project already has a paid (TransactionStatusEnum.In) transaction
+///      whose amount equals payWithSms, the parent-level In transaction is deleted and
+///      redistributed across the newly created children (mirrors PaymentMelliPublicReturn
+///      big-project payment flow).
 /// NOTE: Does NOT call SaveChangesAsync; callers are responsible for saving.
 /// </summary>
 public class CreateBigProjectChildrenCommandHandler(
@@ -36,6 +43,13 @@ public class CreateBigProjectChildrenCommandHandler(
         var fileNumberChild = request.StartFileNumber;
         var childInspectionCount = request.ChildInspectionCount;
         var childErtCount = request.ChildErtCount;
+
+        // Track newly created children in-memory so we can redistribute
+        // an existing In transaction without waiting for SaveChanges.
+        var createdInspectionChildren =
+            new List<(ElectProject Project, Invoice InspectionInvoice, Invoice ServiceInvoice)>();
+        var createdErtChildren =
+            new List<(ElectProject Project, Invoice ErtInvoice)>();
 
         // ── Pre-cleanup ──────────────────────────────────────────────────────
         // If this project already has children (edge case on re-call), delete
@@ -92,7 +106,6 @@ public class CreateBigProjectChildrenCommandHandler(
             int areaAsBuiltChildDiv = request.AreaAsBuilt % childInspectionCount;
 
             payWithSms += amountPayInspection + amountPaySupervision + sumAmountService;
-            electProject.UpdateBigProject(payWithSms);
 
             var remaining = childInspectionCount;
             while (remaining > 0)
@@ -182,6 +195,9 @@ public class CreateBigProjectChildrenCommandHandler(
                     ElectrodeMaterialTypeEnum.None, "", "", "", "", "", "", "", "", "", "", "", "", "");
                 projectErtFormRepository.Add(ertFormChild);
 
+                // Track for potential In-transaction redistribution
+                createdInspectionChildren.Add((childProject, invoiceInspectionChild, invoiceServices));
+
                 remaining--;
                 fileNumberChild++;
             }
@@ -203,7 +219,6 @@ public class CreateBigProjectChildrenCommandHandler(
             int areaChildDiv = request.Area % divisor;
 
             payWithSms += (amountPayErtSystem * childErtCount) + (amountPayService * childErtCount);
-            electProject.UpdateBigProject(payWithSms);
 
             var remaining = childErtCount;
             while (remaining > 0)
@@ -280,8 +295,68 @@ public class CreateBigProjectChildrenCommandHandler(
                     ElectrodeMaterialTypeEnum.None, "", "", "", "", "", "", "", "", "", "", "", "", "");
                 projectErtFormRepository.Add(ertFormChild);
 
+                // Track for potential In-transaction redistribution
+                createdErtChildren.Add((childErtProject, invoiceErtSystemChild));
+
                 remaining--;
                 fileNumberChild++;
+            }
+        }
+
+        // ── Update AmountPerArea with the final complete total ───────────────
+        // Sets IsBigProject = true and AmountPerArea = payWithSms in one call.
+        electProject.UpdateBigProject(payWithSms);
+
+        // ── Redistribute existing In payment to new children ─────────────────
+        // If the parent project was already paid (a TransactionStatusEnum.In exists
+        // whose amount matches the new payWithSms total), delete the parent-level
+        // In transaction and re-create child-level In transactions — mirroring the
+        // PaymentMelliPublicReturn big-project payment distribution flow.
+        // Invoices are used from in-memory tracking (not queried) because
+        // SaveChangesAsync has not been called yet.
+        var existingInTransaction = await transactionRepository.GetByElectProjectId(
+            electProject.Id.ToString(), TransactionStatusEnum.In);
+
+        if (existingInTransaction is not null && existingInTransaction.Amount == payWithSms)
+        {
+            await transactionRepository.DeleteById(existingInTransaction.Id);
+
+            foreach (var (childProject, invoiceInspection, invoiceService) in createdInspectionChildren)
+            {
+                var transactionInspectionChild = new Transaction(
+                    invoiceInspection.Amount + invoiceService.Amount,
+                    client, client.Id.ToString(),
+                    existingInTransaction.GatewayType,
+                    TransactionTypeEnum.Client,
+                    TransactionStatusEnum.In,
+                    DateTime.Now,
+                    Helper.MiladiToShamsiFull(DateTime.Now),
+                    existingInTransaction.BankTransactionId + "-" + childProject.FileNumber,
+                    existingInTransaction.Des + " - کارشناسی" +
+                    $" - پرونده اصلی:{electProject.FileNumber}" +
+                    $" - مبلغ تراکنش اصلی:{electProject.AmountPerArea}",
+                    childProject.Id.ToString()
+                );
+                transactionRepository.Add(transactionInspectionChild);
+            }
+
+            foreach (var (childErtProject, invoiceErt) in createdErtChildren)
+            {
+                var transactionErtChild = new Transaction(
+                    invoiceErt.Amount,
+                    client, client.Id.ToString(),
+                    existingInTransaction.GatewayType,
+                    TransactionTypeEnum.Client,
+                    TransactionStatusEnum.In,
+                    DateTime.Now,
+                    Helper.MiladiToShamsiFull(DateTime.Now),
+                    existingInTransaction.BankTransactionId + "-" + childErtProject.FileNumber,
+                    existingInTransaction.Des + " - ارت" +
+                    $" - پرونده اصلی:{electProject.FileNumber}" +
+                    $" - مبلغ تراکنش اصلی:{electProject.AmountPerArea}",
+                    childErtProject.Id.ToString()
+                );
+                transactionRepository.Add(transactionErtChild);
             }
         }
 
