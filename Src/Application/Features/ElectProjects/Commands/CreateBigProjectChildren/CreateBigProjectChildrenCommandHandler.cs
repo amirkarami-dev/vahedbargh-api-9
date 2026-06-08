@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Coreapi.Application.Common.Interfaces;
+﻿using Coreapi.Application.Common.Interfaces;
 using Coreapi.Common.Enums;
 using Coreapi.Common.Utility;
 using Coreapi.Domain.AggregatesModel.ElectProjectAgg;
 using Coreapi.Domain.AggregatesModel.FinanceAgg;
 using MediatR;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Coreapi.Application.Features.ElectProjects.Commands.CreateBigProjectChildren;
 
@@ -49,7 +50,7 @@ public class CreateBigProjectChildrenCommandHandler(
         var createdInspectionChildren =
             new List<(ElectProject Project, Invoice InspectionInvoice, Invoice ServiceInvoice)>();
         var createdErtChildren =
-            new List<(ElectProject Project, Invoice ErtInvoice)>();
+            new List<(ElectProject Project, Invoice ErtInvoice, Invoice ServiceInvoice)>();
 
         // ── Pre-cleanup ──────────────────────────────────────────────────────
         // If this project already has children (edge case on re-call), delete
@@ -296,7 +297,7 @@ public class CreateBigProjectChildrenCommandHandler(
                 projectErtFormRepository.Add(ertFormChild);
 
                 // Track for potential In-transaction redistribution
-                createdErtChildren.Add((childErtProject, invoiceErtSystemChild));
+                createdErtChildren.Add((childErtProject, invoiceErtSystemChild, invoiceServices));
 
                 remaining--;
                 fileNumberChild++;
@@ -321,6 +322,23 @@ public class CreateBigProjectChildrenCommandHandler(
         {
             await transactionRepository.DeleteById(existingInTransaction.Id);
 
+            // Clean up any leftover parent-level invoices/transactions before
+            // creating the child-level In transactions below.
+            var parentInvoices = (await invoiceRepository.GetInvoicesByProjectId(electProject.Id)).ToList();
+            if (parentInvoices.Count > 0)
+            {
+                var invoiceIds = parentInvoices.Select(i => i.Id).ToList();
+                var transactionIds = parentInvoices
+                    .Where(i => i.Transaction is not null)
+                    .Select(i => i.Transaction.Id)
+                    .ToList();
+
+                // Delete Invoices first (releases the TransactionId FK),
+                // then delete the Transactions (no longer referenced).
+                await invoiceRepository.DeleteByIds(invoiceIds);
+                await transactionRepository.DeleteByIds(transactionIds);
+            }
+
             foreach (var (childProject, invoiceInspection, invoiceService) in createdInspectionChildren)
             {
                 var transactionInspectionChild = new Transaction(
@@ -340,10 +358,10 @@ public class CreateBigProjectChildrenCommandHandler(
                 transactionRepository.Add(transactionInspectionChild);
             }
 
-            foreach (var (childErtProject, invoiceErt) in createdErtChildren)
+            foreach (var (childErtProject, invoiceErt, invoiceService) in createdErtChildren)
             {
                 var transactionErtChild = new Transaction(
-                    invoiceErt.Amount,
+                    invoiceErt.Amount + invoiceService.Amount,
                     client, client.Id.ToString(),
                     existingInTransaction.GatewayType,
                     TransactionTypeEnum.Client,

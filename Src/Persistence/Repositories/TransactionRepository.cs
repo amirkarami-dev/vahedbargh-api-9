@@ -308,5 +308,18 @@ namespace Coreapi.Persistence.Repositories
             }
             return amount;
         }
+
+        public async Task DeleteByIds(IEnumerable<Guid> ids)
+        {
+            var idList = ids.ToList();
+            if (idList.Count == 0) return;
+
+            var entities = await context.Transactions
+                .Where(t => idList.Contains(t.Id))
+                .ToListAsync();
+
+            context.Transactions.RemoveRange(entities);
+            await context.SaveChangesAsync();
+        }
     }
 }

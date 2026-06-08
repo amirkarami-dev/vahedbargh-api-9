@@ -221,9 +221,9 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
 									throw new NotFoundException("برای این پرونده ارت تایید شده دارد");
 
 								if (electProject.IsBuildingInspection) electProject.UpdateProjectLevel(ProjectLevelEnum.ExpertStage);
-								if (electProject.IsEarthSystem && !electProject.IsBuildingInspection) electProject.UpdateProjectLevel(ProjectLevelEnum.NullStage);
+								if (!electProject.IsBuildingInspection) electProject.UpdateProjectLevel(ProjectLevelEnum.NullStage);
 
-							    var ertProcess=	epp.Where(w=> w.ProjectLevelEnum is ProjectLevelEnum.ErtStage).ToList();
+								var ertProcess=	epp.Where(w=> w.ProjectLevelEnum is ProjectLevelEnum.ErtStage).ToList();
                                 foreach (var process in ertProcess) { 
                                     process.SoftDelete();
                                 }
@@ -487,6 +487,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                         request.AreaAsBuilt
                     );
 
+                
+
                 if (amountPay > 0)
                 {
                     // دریافت هزینه خدمات
@@ -524,9 +526,6 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                     }
 
                 }
-
-
-
 
 
                 // -- Administrator: ایجاد زیرپرونده های پرونده بزرگ

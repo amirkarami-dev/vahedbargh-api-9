@@ -11,6 +11,8 @@ namespace Coreapi.Domain.AggregatesModel.FinanceAgg
     public interface IInvoiceRepository:IRepository<Invoice>
     {
         Task<Invoice> GetInvoiceByProjectId(Guid projectId, InvoicePayTypeEnum invoicePayType);
-        Task<Invoice> GetInvoiceByProjectIdWithProcess(Guid projectId, InvoicePayTypeEnum invoicePayType);
+        Task<IEnumerable<Invoice>> GetInvoicesByProjectId(Guid projectId);
+		Task<Invoice> GetInvoiceByProjectIdWithProcess(Guid projectId, InvoicePayTypeEnum invoicePayType);
+        Task DeleteByIds(IEnumerable<Guid> ids);
     }
 }
