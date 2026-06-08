@@ -474,7 +474,7 @@ public class EppApprovedCommandHandler(
                 allProjectProcess.Count(w => w.ProjectLevelEnum == ProjectLevelEnum.ExpertStage);
             var findAllExpertProcessCanceled =
                 allProjectProcess.Count(w => w.ProjectLevelEnum == ProjectLevelEnum.ExpertStage && w.InspectionStatusEnum is InspectionStatusEnum.Canceled);
-            if(findExpertProcess == findAllExpertProcessCanceled) electProject.UpdateProjectLevel(ProjectLevelEnum.NullStage);
+            if(findExpertProcess>0 && findExpertProcess == findAllExpertProcessCanceled) electProject.UpdateProjectLevel(ProjectLevelEnum.NullStage);
 
 
             await electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
