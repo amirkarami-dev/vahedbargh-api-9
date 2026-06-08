@@ -31,6 +31,7 @@ namespace Coreapi.Domain.AggregatesModel.FinanceAgg
         Task<long> GetBigProjectBalance(List<string> childIds); 
 		Task<IEnumerable<Invoice>> GetClientEngPaymentByEng(Guid clientId, DateTime startDate, DateTime endDate);
         Task<IEnumerable<Transaction>> GetClientTransactions(Guid clientId, TransactionStatusEnum transactionStatusEnum);
+        Task DeleteByIds(IEnumerable<Guid> ids);
 
 
     }

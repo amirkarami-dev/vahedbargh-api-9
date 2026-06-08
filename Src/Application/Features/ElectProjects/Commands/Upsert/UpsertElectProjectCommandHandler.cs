@@ -12,6 +12,7 @@ using Coreapi.Domain.AggregatesModel.FinanceAgg;
 using Coreapi.Domain.AggregatesModel.BuildingTariffAgg;
 using Coreapi.Domain.AggregatesModel.ErtTariffAgg;
 using Coreapi.Domain.SeedWork;
+using Coreapi.Application.Features.ElectProjects.Commands.CreateBigProjectChildren;
 using MediatR;
 
 namespace Coreapi.Application.Features.ElectProjects.Commands.Upsert;
@@ -24,7 +25,8 @@ public class UpsertElectProjectCommandHandler(
     IClientRepository clientRepository,
     IInvoiceRepository invoiceRepository, 
     ISmsService smsService, 
-    IErtTariffRepository ertTariffRepository
+    IErtTariffRepository ertTariffRepository,
+    IMediator mediator
     ):
     IRequestHandler<UpsertElectProjectCommand,string>
 {
@@ -38,8 +40,6 @@ public class UpsertElectProjectCommandHandler(
         var client = await clientRepository.GetById(Guid.Parse(currentUser.ClientId));
         long payWithSms = 0;
         long sumAmountService = 0;
-        var childInspectionCount = request.ChildInspectionCount;
-        var childErtCount = request.ChildErtCount;
         if (client is null)
         {
             throw new NotFoundException(nameof(Client), currentUser.ClientId);
@@ -180,147 +180,6 @@ public class UpsertElectProjectCommandHandler(
 
 					}
 
-
-                    // اگر پرونده بزرگ باشه به تعداد بازرسی ایجاد زیر پرونده میشه
-                    if (request.ChildInspectionCount > 0)
-                    {
-                       
-						// inspection
-						long amountPayInspectionChild = 0;
-                        long amountPayInspectionChildDiv = 0;
-                        var areaChild = 0;
-                        var areaChildDiv = 0;
-                        var areaAsBuiltChild= 0;
-                        var areaAsBuiltChildDiv = 0;
-
-
-						// service
-						long amountPayServiceChild = 0;
-                        long amountPayServiceChildDiv = 0;
-
-						// supervision
-						long amountPaySupervisionChild = 0;
-						long amountPaySupervisionChildDiv = 0;
-
-
-						// اگر پرونده بزرگ باشه مبلغش چون تعرفه ساختمانش یک هستش و ضریب هم یک هستش در نهایت ضریب مبلغ هر مترمربع میخوره
-						amountPayInspectionChild = amountPayInspection / request.ChildInspectionCount;
-                        amountPayInspectionChildDiv = amountPayInspection % request.ChildInspectionCount;
-
-                        amountPayServiceChild = sumAmountService / request.ChildInspectionCount;
-                        amountPayServiceChildDiv = sumAmountService % request.ChildInspectionCount;
-
-						amountPaySupervisionChild = amountPaySupervision / request.ChildInspectionCount;
-						amountPaySupervisionChildDiv = amountPaySupervision % request.ChildInspectionCount;
-
-
-						//محاسبه مقدار باقیمانده از تقسیم متراژ بر تعداد
-						areaChild = request.Area / request.ChildInspectionCount;
-                        areaChildDiv = request.Area % request.ChildInspectionCount;
-
-						//محاسبه مقدار باقیمانده از تقسیم متراژ ازبیلت بر تعداد
-						areaAsBuiltChild = request.AreaAsBuilt / request.ChildInspectionCount;
-						areaAsBuiltChildDiv = request.AreaAsBuilt % request.ChildInspectionCount;
-
-						// آپدیت کردن مبلغ کل بازرسی  پرونده و بیگ پروجکت
-						payWithSms += (amountPayInspection + amountPaySupervision + sumAmountService);
-                        electProject.UpdateBigProject(payWithSms);
-
-						while (childInspectionCount > 0)
-                        {
-                            // اگر آخرین باشید مغایرت با کل پرداختی محاسبه و به مبلغ پرداخت آخری اضافه میشود
-                            if (childInspectionCount == 1)
-                            {
-                                amountPayInspectionChild += amountPayInspectionChildDiv;
-                                amountPayServiceChild += amountPayServiceChildDiv;
-								amountPaySupervisionChild += amountPaySupervisionChildDiv;
-
-								areaChild += areaChildDiv;
-                                areaAsBuiltChild += areaAsBuiltChildDiv;
-
-							}
-                            var childProject = new ElectProject(
-                                fileNumberChild,
-                                currentUser.UserId,
-                                client,/*areaChild*/ areaChild,
-                                request.NumberOfFloor,
-                                $"{fileNumber + "-" + (fileNumberChild - fileNumber)}",
-                                request.Address,
-                                request.PostalCode,
-                                request.LandlordName,
-                                request.LandlordNaCode,
-                                request.LandlordPhoneNumber,
-                                request.CompanyName,
-                                request.LicenseNumber,
-                                request.Description,
-                                request.IdSection,
-                                request.IdCity,
-                                request.IdProvince,
-                                request.Lat,
-                                request.Lng,
-                                request.ProjectCreatedTypeEnum,
-                                request.ProjectTypeRequestEnum,
-                                buildingTariff, null,
-                                ProjectLevelEnum.NullStage,
-                                DateTime.Now.Date,
-                                Helper.MiladiToShamsi(DateTime.Now.Date),
-                                false, false, true,
-                                request.IsTestAndDelivery,
-                                request.PanelNeed,
-                                request.FoundationElectrodeArea,
-                                false, 0,
-                                request.HasRelatedPermit,
-                                request.HasSupervision,
-								areaAsBuiltChild
-								)
-                            {
-
-                            };
-                            // آپدیت کردن پرنت زیر پرونده
-                            childProject.UpdateParentProject(electProject);
-
-                            electProjectRepository.Add(childProject);
-
-                            // ایجاد فاکتور برای هر زیر پرونده
-                            var invoiceInspectionChild = new Invoice(client, childProject, amountPayInspectionChild + amountPaySupervisionChild, InvoiceStatusEnum.Pending,
-                                InvoicePayTypeEnum.CreateProjectStage);
-
-							invoiceInspectionChild.UpdateAmountSupervision(amountPaySupervisionChild);
-							invoiceRepository.Add(invoiceInspectionChild);
-
-                            //  ایجاد تراکنش برداشت مرحله ایجاد زیر پرونده برای بازرسی
-                            var transactionChild = new Transaction(invoiceInspectionChild.Amount, client, client.Id.ToString(),
-                                GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                                Helper.MiladiToShamsi(DateTime.Now.Date), childProject.FileNumber.ToString(),
-                                $"برداشت ایجاد پرونده بازرسی:{childProject.FileNumber}", childProject.Id.ToString());
-                            invoiceInspectionChild.Done(transactionChild);
-
-                            // برداشت خدمات برای زیر پرونده
-                            var invoiceServices = new Invoice(
-                                client, childProject, amountPayServiceChild,
-                                InvoiceStatusEnum.Pending,
-                                InvoicePayTypeEnum.ProjectServices);
-                            invoiceRepository.Add(invoiceServices);
-                            // ایجاد تراکنش برداشت خدمات پرونده 
-                            var transactionServices = new Transaction(amountPayServiceChild, client, client.Id.ToString(),
-                                GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                                Helper.MiladiToShamsi(DateTime.Now.Date), childProject.FileNumber.ToString(),
-                                $"برداشت هزینه خدمات:{childProject.FileNumber}", childProject.Id.ToString());
-                            invoiceServices.Done(transactionServices);
-
-
-                            // ایجاد کردن فرم ارت برای هر زیرپرونده
-                            var ertFormChild = new ElectProjectErtForm(childProject, "", 0, 0, "", ElectrodeUsageTypeEnum.None, "", ElectrodeExecuteTypeEnum.None, "", ElectrodeTypeEnum.None, "",
-                                ElectrodeMaterialTypeEnum.None, "", "", "", "", "", "", "", "", "", "", "", "", "");
-                            projectErtFormRepository.Add(ertFormChild);
-                                    
-                            childInspectionCount--;
-                            fileNumberChild++;
-
-                        }
-
-                    }
-                           
                 }
 
                 // اگر پرونده ارت داشته باشد
@@ -351,103 +210,27 @@ public class UpsertElectProjectCommandHandler(
                         payWithSms += amountPayErtSystem;
                     }
 
-                    // اگر پرونده بزرگ باشه به تعداد ارت ایجاد زیر پرونده میشه
-                    if (request.ChildErtCount > 0)
-                    {
-                        // دریافت هزینه خدمات ارت 
-                        var amountPayService = Helper.GetAmountProjectServices(amountPayErtSystem);
-
-                        var areaChild = 0;
-                        var areaChildDiv = 0;
-                        areaChild = request.Area / request.ChildInspectionCount;
-                        //محاسبه مقدار باقیمانده از تقسیم متراژ بر تعداد
-            
-                        areaChildDiv = request.Area % request.ChildInspectionCount;
-
-                        // آپدیت کردن مبلغ کلی پرونده بزگ
-                        payWithSms += ((amountPayErtSystem * childErtCount) + (amountPayService * childErtCount));
-                        electProject.UpdateBigProject(payWithSms);
-
-                                
-                        while (childErtCount > 0) 
-                        {
-                            // در آخرین ایجاد مقدار باقیمانده از مساحت بر تعداد: اضافه میشود به مساحت
-                            if (childErtCount == 1) areaChild += areaChildDiv;
-
-                            var childErtProject = new ElectProject(
-                                fileNumberChild, currentUser.UserId, client,
-                                /*areaChild*/ areaChild, request.NumberOfFloor, 
-                                $"{fileNumber + "-" + (fileNumberChild - fileNumber)}", 
-                                request.Address, 
-                                request.PostalCode,
-                                request.LandlordName, 
-                                request.LandlordNaCode,
-                                request.LandlordPhoneNumber, 
-                                request.CompanyName,
-                                request.LicenseNumber, 
-                                request.Description, 
-                                request.IdSection, 
-                                request.IdCity, 
-                                request.IdProvince, 
-                                request.Lat, 
-                                request.Lng, 
-                                request.ProjectCreatedTypeEnum,
-                                request.ProjectTypeRequestEnum, 
-                                buildingTariff,
-                                ertTariff, 
-                                ProjectLevelEnum.NullStage, 
-                                DateTime.Now.Date, 
-                                Helper.MiladiToShamsi(DateTime.Now.Date),
-                                request.IsEarthSystem, false, false, false, false,
-                                request.FoundationElectrodeArea,
-                                request.IsNeedEb, 0,
-                                request.HasRelatedPermit,
-                                request.HasSupervision,0
-                                );
-                            // آپدیت کردن پرنت زیر پرونده
-                            childErtProject.UpdateParentProject(electProject);
-
-                            electProjectRepository.Add(childErtProject);
-
-                            var invoiceErtSystemChild = new Invoice(client, childErtProject, amountPayErtSystem, InvoiceStatusEnum.Pending,
-                                InvoicePayTypeEnum.NezamStage);
-                            invoiceRepository.Add(invoiceErtSystemChild);
-
-                            // ایجاد تراکنش برداشت مرحله ایجاد پرونده ارت 
-                            var transactionChild = new Transaction(amountPayErtSystem, client, client.Id.ToString(),
-                                GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                                Helper.MiladiToShamsi(DateTime.Now.Date), childErtProject.FileNumber.ToString(),
-                                $"برداشت 9 درصد نظام:ارت:{childErtProject.FileNumber}", childErtProject.Id.ToString());
-                            invoiceErtSystemChild.Done(transactionChild);
-
-
-                            // برداشت خدمات برای زیر پرونده
-                            var invoiceServices = new Invoice(
-                                client, childErtProject, amountPayService,
-                                InvoiceStatusEnum.Pending,
-                                InvoicePayTypeEnum.ProjectServices);
-                            invoiceRepository.Add(invoiceServices);
-                            // ایجاد تراکنش برداشت خدمات پرونده 
-                            var transactionServices = new Transaction(amountPayService, client, client.Id.ToString(),
-                                GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                                Helper.MiladiToShamsi(DateTime.Now.Date), childErtProject.FileNumber.ToString(),
-                                $"برداشت هزینه خدمات:{childErtProject.FileNumber}", childErtProject.Id.ToString());
-                            invoiceServices.Done(transactionServices);
-
-
-
-                            var ertFormChild = new ElectProjectErtForm(childErtProject, "", 0, 0, "", ElectrodeUsageTypeEnum.None, "", ElectrodeExecuteTypeEnum.None, "", ElectrodeTypeEnum.None, "",
-                                ElectrodeMaterialTypeEnum.None, "", "", "", "", "", "", "", "", "", "", "", "", "");
-                            projectErtFormRepository.Add(ertFormChild);
-
-
-                            childErtCount--;
-                            fileNumberChild++;
-                        }
-
-                    }
 
                 }
+
+                // -- ایجاد زیرپرونده های پرونده بزرگ (بازرسی و/یا ارت) --
+                if (request.ChildInspectionCount > 0 || request.ChildErtCount > 0)
+                {
+                    var childrenPay = await mediator.Send(new CreateBigProjectChildrenCommand(
+                        electProject, client, buildingTariff,
+                        request.IsEarthSystem ? ertTariff : null,
+                        request.ChildInspectionCount, request.ChildErtCount,
+                        fileNumberChild,
+                        request.Area, request.AreaAsBuilt, request.NumberOfFloor,
+                        request.Address, request.PostalCode, request.LandlordName,
+                        request.LandlordNaCode, request.LandlordPhoneNumber, request.LicenseNumber,
+                        request.IdSection, request.HasSupervision, request.IsEarthSystem,
+                        request.IsTestAndDelivery, request.PanelNeed, request.FoundationElectrodeArea,
+                        request.IsNeedEb, request.HasRelatedPermit
+                    ), cancellationToken);
+                    payWithSms += childrenPay;
+                }
+
             }
 
 

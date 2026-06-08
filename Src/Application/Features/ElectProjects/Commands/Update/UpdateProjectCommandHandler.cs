@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Coreapi.Application.Common.Exceptions;
 using Coreapi.Application.Common.Interfaces;
+using Coreapi.Application.Features.ElectProjects.Commands.CreateBigProjectChildren;
 using Coreapi.Common.Enums;
 using Coreapi.Common.Utility;
 using Coreapi.Domain.AggregatesModel.BuildingTariffAgg;
@@ -27,7 +28,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
         IElectProjectProcessRepository electProjectProcessRepository,
         IErtTariffRepository ertTariffRepository,
         IEngPaymentTaskRepository paymentTaskRepository,
-        IEngPaymentListRepository paymentListRepository
+        IEngPaymentListRepository paymentListRepository,
+        IMediator mediator
     ) :
         IRequestHandler<UpdateProjectCommand, string>
     {
@@ -75,11 +77,15 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                 );
 
             }
-            // تغییرات از سمت ادمین
-            else
-            {
+			// change from not ElectAdmin
+			else
+			{
                 if (request.IsTestAndDelivery && (request.IsBuildingInspection || request.IsEarthSystem))
                     throw new NotFoundException("پرونده تست و تحویل نمیتواند بازرسی یا مجری ارت فعال داشته باشد");
+
+                // جلوگیری از تغییر تعداد زیر پرونده در پرونده های بزرگ از قبل ثبت شده
+                if (electProject.IsBigProject && (request.ChildInspectionCount > 0 || request.ChildErtCount > 0))
+                    throw new NotFoundException("این پرونده قبلا به عنوان پرونده بزرگ ثبت شده است و تعداد زیرپرونده قابل تغییر نیست");
 
 
                 // دریافت تعرفه بر اساس گروه ساختمانی و گروه طبقات
@@ -205,11 +211,6 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                     )
                     {
 
-                        // محدود کردن تغییرات در پرونده های بزرگ
-                        if (electProject.IsBigProject || electProject.ParentProject is not null)
-                            throw new NotFoundException(
-                                "در پرونده های بزرگ یا زیر پروژه تغییراتی که منجر به تغییر مبلغ شود قابل انجام نیست");
-
                         // اگر پرونده انشعاب موقت/دائم باشد
                         if (electProject.ProjectTypeRequestEnum is ProjectTypeRequestEnum.Pr0)
                         {
@@ -220,9 +221,9 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
 									throw new NotFoundException("برای این پرونده ارت تایید شده دارد");
 
 								if (electProject.IsBuildingInspection) electProject.UpdateProjectLevel(ProjectLevelEnum.ExpertStage);
-								if (electProject.IsEarthSystem && !electProject.IsBuildingInspection) electProject.UpdateProjectLevel(ProjectLevelEnum.NullStage);
+								if (!electProject.IsBuildingInspection) electProject.UpdateProjectLevel(ProjectLevelEnum.NullStage);
 
-							    var ertProcess=	epp.Where(w=> w.ProjectLevelEnum is ProjectLevelEnum.ErtStage).ToList();
+								var ertProcess=	epp.Where(w=> w.ProjectLevelEnum is ProjectLevelEnum.ErtStage).ToList();
                                 foreach (var process in ertProcess) { 
                                     process.SoftDelete();
                                 }
@@ -486,6 +487,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                         request.AreaAsBuilt
                     );
 
+                
+
                 if (amountPay > 0)
                 {
                     // دریافت هزینه خدمات
@@ -525,8 +528,44 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                 }
 
 
+                // -- Administrator: ایجاد زیرپرونده های پرونده بزرگ
+                // شرط: ادمین سیستم + تعرفه ساختمان تعیین شده + پرونده هنوز بزرگ نشده +
+                //       تعداد زیرپرونده بازرسی یا ارت بیشتر از صفر
+                if (currentUser.Role.Contains("Administrator") &&
+                    electProject.BuildingTariff is not null &&
+                    !electProject.IsBigProject &&
+                    (request.ChildInspectionCount > 0 || request.ChildErtCount > 0))
+                {
+                    var startFileNumber = await electProjectRepository
+                        .GetLastFileNumber(Guid.Parse(currentUser.ClientId), 1405) + 1;
 
-
+                    await mediator.Send(new CreateBigProjectChildrenCommand(
+                        electProject,
+                        client,
+                        buildingTariff,
+                        request.IsEarthSystem ? ertTariff : null,
+                        request.ChildInspectionCount,
+                        request.ChildErtCount,
+                        startFileNumber,
+                        request.Area,
+                        request.AreaAsBuilt,
+                        request.NumberOfFloor,
+                        request.Address,
+                        request.PostalCode,
+                        request.LandlordName,
+                        request.LandlordNaCode,
+                        request.LandlordPhoneNumber,
+                        request.LicenseNumber,
+                        request.IdSection,
+                        request.HasSupervision,
+                        request.IsEarthSystem,
+                        false, // IsTestAndDelivery - همیشه false برای زیرپرونده های Update
+                        request.PanelNeed,
+                        request.FoundationElectrodeArea,
+                        request.IsNeedEb,
+                        request.HasRelatedPermit
+                    ), cancellationToken);
+                }
 
             }
             await electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
