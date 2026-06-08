@@ -5,6 +5,7 @@ using Coreapi.Application.Features.ElectProjectProcesses.Commands.Approved;
 using Coreapi.Application.Features.ElectProjectProcesses.Commands.ChangeProjectProcess;
 using Coreapi.Application.Features.ElectProjectProcesses.Commands.DeleteProjectProcess;
 using Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectProcess;
+using Coreapi.Application.Features.ElectProjectProcesses.Commands.UpdateIsMain;
 using Coreapi.Application.Features.ElectProjectProcesses.Queries.GetListProjectProcessEng;
 using Coreapi.Application.Features.ElectProjectProcesses.Queries.GetProjectProcess;
 using Coreapi.Domain.AggregatesModel.ExecutorAgg;
@@ -61,6 +62,12 @@ namespace Coreapi.Api.Controllers
         [Authorize(Roles = "Administrator")]
         [HttpPost]
         public async Task<IActionResult> EppEngChange([FromBody] ChangeProjectProcessCommand command) =>
+            Ok(await Mediator.Send(command));
+
+
+        [Authorize(Roles = "Administrator, SuperUser, Section")]
+        [HttpPost]
+        public async Task<IActionResult> EppUpdateIsMain([FromBody] UpdateIsMainCommand command) =>
             Ok(await Mediator.Send(command));
 
     }

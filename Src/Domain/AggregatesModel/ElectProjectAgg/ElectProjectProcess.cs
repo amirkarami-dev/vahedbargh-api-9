@@ -163,6 +163,8 @@ namespace Coreapi.Domain.AggregatesModel.ElectProjectAgg
 
 		public void ChangeEngineer(Engineer engineer) => Engineer = engineer;
 
+		public void UpdateIsMain(bool isMain) => IsMain = isMain;
+
 		public void SoftDelete()
         {
             IsDelete = true;

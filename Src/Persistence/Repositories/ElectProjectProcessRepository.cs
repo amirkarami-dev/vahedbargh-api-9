@@ -125,7 +125,8 @@ namespace Coreapi.Persistence.Repositories
             var listEpp = context.ElectProjectProcesses
                 .Include(i => i.Client)
                 .Include(i => i.ElectProject)
-                .Include(i => i.QuarterTariff)
+                .Include(i => i.ElectProject.ParentProject)
+				.Include(i => i.QuarterTariff)
                 .Include(i => i.Engineer)
                 .Where(w => !w.IsDelete)
                 .Where(w => string.IsNullOrEmpty(eppFilterModel.EngineerId) ||

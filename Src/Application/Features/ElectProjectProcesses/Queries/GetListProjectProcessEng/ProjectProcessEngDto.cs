@@ -70,8 +70,11 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Queries.GetListProj
         public long ProjectBalance { get; set; }
 
         public string ProjectBalanceLinkForPay { get; set; }
+		public bool IsMain { get; set; }
 
-        public IEnumerable<CommentEngForm> CommentEngForm { get; set; }
+
+
+		public IEnumerable<CommentEngForm> CommentEngForm { get; set; }
         public IEnumerable<CheckListForm> CheckListForms { get; set; }
         public IEnumerable<CheckListEdc> CheckListEdcs { get; set; }
         public ElectProjectErtForm ElectProjectErtForm { get; set; }
