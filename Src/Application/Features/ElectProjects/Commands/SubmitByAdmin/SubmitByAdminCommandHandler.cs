@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Coreapi.Application.Common.Exceptions;
+﻿using Coreapi.Application.Common.Exceptions;
 using Coreapi.Application.Common.Interfaces;
 using Coreapi.Common.Enums;
 using Coreapi.Common.Utility;
@@ -12,6 +6,13 @@ using Coreapi.Domain.AggregatesModel.ClientAggregate;
 using Coreapi.Domain.AggregatesModel.ElectProjectAgg;
 using Coreapi.Domain.AggregatesModel.EngineerAgg;
 using MediatR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 using CheckListForm = Coreapi.Common.ViewModels.CheckListForm;
 using CommentEngForm = Coreapi.Common.ViewModels.CommentEngForm;
 
@@ -45,9 +46,9 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.SubmitByAdmin
             if (electProject.IsStop) throw new NotFoundException("این پرونده متوقف شده است و قابل تایید نیست");
 
             // دریافت امضای مدیر
-            var signEngineerPath = $"Upload\\UserFiles\\{currentUser.UserId}\\F2.png";
-            var signEngineerPathS3 = await s3Service.GetFile(signEngineerPath.Replace(@"\", "/"));
-            if (signEngineerPathS3 is null) throw new NotFoundException("لطفا مهر و امضای خود را در قسمت فایل های من بارگذاری کنید");
+            var signAdminPath = $"Upload\\UserFiles\\{currentUser.UserId}\\F2.png";
+            var signAdminPathS3 = await s3Service.GetFile(signAdminPath.Replace(@"\", "/"));
+            if (signAdminPathS3 is null) throw new NotFoundException("لطفا مهر و امضای خود را در قسمت فایل های من بارگذاری کنید");
 
             // دریافت فایل های مربوط به این پرونده
             var electProjectFiles = await electProjectFileRepository.GetByIdElectProject(electProject.Id);
@@ -56,9 +57,10 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.SubmitByAdmin
 
 
 
+		
 
-            // ایجاد پی دی اف فرم شماره 4
-            if (electProject.IsBigProject)
+
+			if (electProject.IsBigProject)
             {
                 // برای پرونده های بزرگ
                 var listEngName = "";
@@ -112,7 +114,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.SubmitByAdmin
                 await reportService.GetApprovedCheckListFormBigProject(engineersAndImages, checkList, electProject,
                     workPermitNum);
 
-                await reportService.GetApprovedSentToElectForm(signEngineerPathS3, electProject, listEngName, "شرکت توزیع برق");
+                await reportService.GetApprovedSentToElectForm(signAdminPathS3, electProject, listEngName, "شرکت توزیع برق");
 
 
                 // چک کردن اینکه فایل فرم شماره 3 وجود دارد اگر ندارد ایجادش میکند در دیتابیس
@@ -166,9 +168,87 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.SubmitByAdmin
                 var approvedProcess = electProcess.SingleOrDefault(c => c.InspectionStatusEnum == InspectionStatusEnum.Done && c.ProjectLevelEnum == ProjectLevelEnum.ExpertStage);
                 if (approvedProcess is null) throw new NotFoundException("تاییدیه کارشناس وجود ندارد");
 
-                await reportService.GetApprovedSentToElectForm(signEngineerPathS3, electProject, approvedProcess.Engineer.FullName, "شرکت توزیع برق");
+				var comments = await commentEngFormRepository.GetCommentEngForm(electProject.Id, approvedProcess.Engineer.Id);
+				if (comments is null) throw new NotFoundException("فرم شماره 3 خالی می باشد");
 
-            }
+				var checkList = await checkListFormRepository.GetCheckLIstEngForm(electProject.Id, approvedProcess.Engineer.Id);
+				if (checkList is null) throw new NotFoundException("چک لیست خالی می باشد");
+
+
+
+				// دریافت امضای کارشناس
+				var signEngineerPath = $"Upload\\UserFiles\\{approvedProcess.Engineer.UserId}\\F2.png";
+				var signEngineerPathS3 = await s3Service.GetFile(signEngineerPath.Replace(@"\", "/"));
+				if (signEngineerPathS3 is null) throw new NotFoundException("لطفا مهر و امضای خود را در قسمت فایل های من بارگذاری کنید");
+
+
+				// ایجاد پی دی اف فرم نامه ارسال به شرکت توزیع
+
+				await reportService.GetApprovedSentToElectForm(signAdminPathS3, electProject, approvedProcess.Engineer.FullName, "شرکت توزیع برق");
+
+
+				var approvedFilesExist = electProjectFiles.FirstOrDefault(c => c.FileTypeEnum == FileTypeEnum.ApprovedComment);
+
+				var workPermitNum = await engineerRepository.GetLastWorkPermitNum(approvedProcess.Engineer.Id);
+				var approvedCheckListFilesExist = electProjectFiles.FirstOrDefault(c => c.FileTypeEnum == FileTypeEnum.ApprovedCheckList);
+
+
+				// ایجاد فرم شماره 3 approved-comment-form.pdf اف
+				await reportService.GetApprovedCommentForm(signEngineerPathS3, comments, electProject, approvedProcess.Engineer);
+
+				// ایجاد پی دی اف approved-check-list-form.pdf چک لیست
+				await reportService.GetApprovedCheckListForm(signEngineerPathS3, checkList, electProject, approvedProcess.Engineer,
+					workPermitNum, approvedProcess.SolarDateDeliverEngineer);
+
+
+				// چک کردن اینکه فایل فرم شماره 3 وجود دارد اگر ندارد ایجادش میکند در دیتابیس
+				var crookyFileExist = electProjectFiles.FirstOrDefault(f => f.FileTypeEnum == FileTypeEnum.Crooky);
+				if (crookyFileExist is null) throw new NotFoundException("فایل کروکی وجود ندارد");
+
+
+				if (approvedFilesExist is not null)
+				{
+					approvedFilesExist.UpdateProjectFile("approved-comment-form.pdf", electProject);
+				}
+				else
+				{
+					var electProjectFile = new ElectProjectFile(
+						"approved-comment-form.pdf" + "-" + electProject.Id,
+						"approved-comment-form",
+						FileTypeEnum.ApprovedComment,
+						electProject.Id.ToString(),
+						"approved-comment-form.pdf",
+						approvedProcess.Engineer.UserId,
+						approvedProcess.Engineer.UserId,
+						electProject);
+					electProjectFileRepository.Add(electProjectFile);
+				}
+
+				// چک کردن اینکه فایل چک لیست وجود دارد اگر ندارد ایجادش میکند در دیتابیس
+				if (approvedCheckListFilesExist is not null)
+				{
+					approvedCheckListFilesExist.UpdateProjectFile("approved-check-list-form.pdf", electProject);
+				}
+				else
+				{
+					var electProjectFile = new ElectProjectFile(
+						"approved-check-list-form.pdf" + "-" + electProject.Id,
+						"approved-check-list-form",
+						FileTypeEnum.ApprovedCheckList,
+						electProject.Id.ToString(),
+						"approved-check-list-form.pdf",
+						approvedProcess.Engineer.UserId,
+						approvedProcess.Engineer.UserId,
+						electProject);
+					electProjectFileRepository.Add(electProjectFile);
+				}
+
+
+
+
+
+
+			}
 
 
             // چک کردن اینکه فایل تاییدیه وجود دارد اگر ندارد ایجادش میکند در دیتابیس

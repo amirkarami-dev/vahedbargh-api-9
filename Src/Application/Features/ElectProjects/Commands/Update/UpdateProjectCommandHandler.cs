@@ -28,7 +28,6 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
         IElectProjectProcessRepository electProjectProcessRepository,
         IErtTariffRepository ertTariffRepository,
         IEngPaymentTaskRepository paymentTaskRepository,
-        IEngPaymentListRepository paymentListRepository,
         IMediator mediator
     ) :
         IRequestHandler<UpdateProjectCommand, string>

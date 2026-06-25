@@ -47,6 +47,7 @@ public class UpsertElectProjectCommandHandler(
         if (request.LandlordName == null || request.LandlordName.Length < 6) throw new NotFoundException("نام مالک نباید کمتر از 6 حرف باشد");
 
         if (request.NumberOfFloor <= 0) throw new NotFoundException("تعداد طبقات نمی تواند صفر باشد");
+        if (String.IsNullOrEmpty(request.Address) || request.Address.Length <= 10) throw new NotFoundException("آدرس نمیتواند کمتر از 10 کاراکتر باشد");
 
 
         if (request.IsTestAndDelivery &&

@@ -19,7 +19,10 @@ public class UpdateProjectValidator:AbstractValidator<UpdateProjectCommand>
             RuleFor(r => r.Area).GreaterThan(0).WithMessage("مساحت نمی تواند صفر باشد");
             RuleFor(r => r.NumberOfFloor).GreaterThan(0).WithMessage("طبقه باید بیشتر از صفر باشد");
         }
-        // Add other validation rules that apply to all users
-    }
+		RuleFor(r => r.Address)
+        .NotEmpty().WithMessage("آدرس نمی‌تواند خالی باشد")
+        .MinimumLength(10).WithMessage("آدرس نمی‌تواند کمتر از 10 کاراکتر باشد");
+		// Add other validation rules that apply to all users
+	}
 
 }

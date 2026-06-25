@@ -350,8 +350,13 @@ public class EppApprovedCommandHandler(
 
 
             await electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+
+                // اگر این پرونده زیرمجموعه پرونده بزرگ است و همه برادرها به مرحله تایید-نظام رسیده اند
+                // پرونده والد را هم به مرحله تایید-نظام ببر
+                await RollupParentApproveStageAsync(electProject, cancellationToken);
+
                 return projectProcess.Id.ToString();
-            
+
         }
 
         // مرحله تایید مجری ارت
@@ -478,6 +483,11 @@ public class EppApprovedCommandHandler(
 
 
             await electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+
+            // اگر این پرونده زیرمجموعه پرونده بزرگ است و همه برادرها به مرحله تایید-نظام رسیده اند
+            // پرونده والد را هم به مرحله تایید-نظام ببر
+            await RollupParentApproveStageAsync(electProject, cancellationToken);
+
             return projectProcess.Id.ToString();
 
         }
@@ -502,9 +512,30 @@ public class EppApprovedCommandHandler(
 
         }
 
+
+
         return "ok";
 
 
 
+    }
+
+    // برای پرونده های زیرمجموعه پرونده بزرگ: اگر همه فرزندها به مرحله تایید-نظام رسیده باشند
+    // پرونده والد را هم به همان مرحله ببر و ذخیره کن. فرزندهای حذف شده نادیده گرفته می شوند.
+    private async Task RollupParentApproveStageAsync(ElectProject electProject, CancellationToken cancellationToken)
+    {
+        if (electProject.ParentProject is null) return;
+
+        var parent = await electProjectRepository.GetElectProjectById(electProject.ParentProject.Id);
+        if (parent?.ChildProjects is null) return;
+
+        var activeChildren = parent.ChildProjects.Where(c => !c.IsDelete).ToList();
+        if (activeChildren.Count == 0) return;
+
+        if (activeChildren.All(c => c.ProjectLevelEnum == ProjectLevelEnum.ApproveStage))
+        {
+            parent.UpdateProjectLevel(ProjectLevelEnum.ApproveStage);
+            await electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+        }
     }
 }

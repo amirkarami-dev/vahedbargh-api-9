@@ -40,7 +40,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublic
             var electProject = await electProjectRepository.GetElectProjectById(decodeId);
             if (electProject is null) throw new NotFoundException("پرونده وجود ندارد");
 
-            if(electProject.ParentProject is not null) throw new NotFoundException("برای زیر پروژه پرداختی قابل انجام نیست");
+            // غیر فعال کردن موقت برای پرداخت 146 هزاری ارت
+            // if(electProject.ParentProject is not null) throw new NotFoundException("برای زیر پروژه پرداختی قابل انجام نیست");
 
 			var getTransaction = await transactionRepository.GetByElectProjectId(decodeId.ToString(),TransactionStatusEnum.In);
 			var amount = electProject.IsBigProject ? await transactionRepository.GetBigProjectBalance([.. electProject.ChildProjects.Select(s => s.Id.ToString())]) : await transactionRepository.GetProjectBalance(electProject.Id);
