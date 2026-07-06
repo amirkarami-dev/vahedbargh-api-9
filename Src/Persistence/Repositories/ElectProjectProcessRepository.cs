@@ -159,7 +159,7 @@ namespace Coreapi.Persistence.Repositories
 
         public async Task<IEnumerable<ElectProjectProcess>> GetEppNotAccepted(int day)
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
             var listEpp = await context.ElectProjectProcesses
                 .Include(i => i.ElectProject)
                 .Where(w => !w.ElectProject.IsDelete)

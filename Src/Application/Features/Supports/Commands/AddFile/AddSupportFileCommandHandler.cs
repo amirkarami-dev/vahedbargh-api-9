@@ -18,9 +18,9 @@ public class AddSupportFileCommandHandler:IRequestHandler<AddSupportFileCommand,
     private readonly ISupportRepository supportRepository;
     private readonly ISupportFileRepository supportFileRepository;
     private readonly ICurrentUser currentUser;
-    private readonly IS3Service s3Service;
+    private readonly IS3ServicePublic s3Service;
 
-    public AddSupportFileCommandHandler(ISupportRepository supportRepository, ISupportFileRepository supportFileRepository, ICurrentUser currentUser, IS3Service s3Service)
+    public AddSupportFileCommandHandler(ISupportRepository supportRepository, ISupportFileRepository supportFileRepository, ICurrentUser currentUser, IS3ServicePublic s3Service)
     {
         this.supportRepository = supportRepository;
         this.supportFileRepository = supportFileRepository;
@@ -35,7 +35,7 @@ public class AddSupportFileCommandHandler:IRequestHandler<AddSupportFileCommand,
         var support = await supportRepository.GetById(supportId);
         if (support == null) throw new NotFoundException("این تیکت وجود ندارد");
 
-        var fileName = request.FileName.Split('.')[0] + Helper.MiladiToShamsiForName(DateTime.Now) + "." + request.FileName.Split('.')[1];
+        var fileName = request.FileName.Split('.')[0] + Helper.MiladiToShamsiForName(DateTime.UtcNow) + "." + request.FileName.Split('.')[1];
 
         await s3Service.UploadFileAttach(request.File, fileName, request.FolderName, supportId.ToString());
 

@@ -126,7 +126,7 @@ namespace Coreapi.Application.Features.User.Commands.AddUser
         //            var engOld = await engineerRepository.getByUserId(userId);
         //            if (engOld is not null) { throw new NotFoundException("قبلا ایجاد شده کارشناس"); }
 
-        //            var eng = new Engineer(userId, engineer.FullName, naCode, "09180000000", DateTime.Now, "", "", "", "", 10184, DateTime.Now, "", engineer.FieldTypeEnum, EducationTypeEnum.BachelorDegree, MaritalStatusTypeEnum.Married, RelatedTypeEnum.Related, client, 0, "", false);
+        //            var eng = new Engineer(userId, engineer.FullName, naCode, "09180000000", DateTime.UtcNow, "", "", "", "", 10184, DateTime.UtcNow, "", engineer.FieldTypeEnum, EducationTypeEnum.BachelorDegree, MaritalStatusTypeEnum.Married, RelatedTypeEnum.Related, client, 0, "", false);
 
 
         //            await userManager.AddToRolesAsync(userId, new List<string>() { "Engineer" });

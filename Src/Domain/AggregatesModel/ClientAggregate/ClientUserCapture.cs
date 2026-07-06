@@ -14,7 +14,7 @@ public class ClientUserCapture
     {
         Id = Guid.NewGuid();
         Client = client;
-        Created = DateTime.Now;
+        Created = DateTime.UtcNow;
         UserId = userId;
         Latitude = latitude;
         Longitude = longitude;

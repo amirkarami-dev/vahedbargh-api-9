@@ -26,7 +26,7 @@ public class BaleService(
     UserManager<ApplicationUser> userManager,
     IElectProjectRepository electProjectRepository,
     IElectProjectFileRepository electProjectFileRepository,
-    IS3Service s3Service,
+    IS3ServicePublic s3Service,
     IHttpClientFactory httpClientFactory,
     BaleConversationStateManager stateManager,
     IEngineerRepository engineerRepository,

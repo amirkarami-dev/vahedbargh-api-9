@@ -247,8 +247,8 @@ public class ElectProject
     public void SubmitByAdmin()
     {
         IsOk = true;
-        SolarDateSendToElectCo = Helper.MiladiToShamsi(DateTime.Now.Date);
-        JulianDateSendToElectCo = DateTime.Now.Date;
+        SolarDateSendToElectCo = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
+        JulianDateSendToElectCo = DateTime.UtcNow.Date;
         ProjectLevelEnum = ProjectLevelEnum.EdcStage;
         ElectProjectStatusEnum = ElectProjectStatusEnum.DeliveredToEdc;
     }
@@ -307,16 +307,16 @@ public class ElectProject
     public void UpdatePanelMaker(PanelMaker panelMaker)
     {
         PanelMaker = panelMaker;
-        JulianDatePanelRegister = DateTime.Now.Date;
-        SolarDatePanelRegister = Helper.MiladiToShamsi(DateTime.Now.Date);
+        JulianDatePanelRegister = DateTime.UtcNow.Date;
+        SolarDatePanelRegister = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
     }
 
     public void SubmitPanel(string panelSerialNumber,bool panelMakerSubmit)
     {
         PanelSerialNumber = panelSerialNumber;
         PanelMakerSubmit = panelMakerSubmit;
-        JulianDatePanelSubmit = DateTime.Now.Date;
-        SolarDatePanelSubmit = Helper.MiladiToShamsi(DateTime.Now.Date);
+        JulianDatePanelSubmit = DateTime.UtcNow.Date;
+        SolarDatePanelSubmit = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
     }
 
     public void UpdateBuildingTariff(BuildingTariff buildingTariff)
@@ -366,14 +366,14 @@ public class ElectProject
         IsDefectEng = true;
         SolvedDefectEng = solveDefectEng;
         DefectAdminDes = defectDes;
-        SolarDateDefectEng = Helper.MiladiToShamsi(DateTime.Now.Date);
-        JulianDateDefectEng = DateTime.Now.Date;
+        SolarDateDefectEng = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
+        JulianDateDefectEng = DateTime.UtcNow.Date;
     }
     public void UpdateSolvedDefectEng(string defectDes)
     {
         SolvedDefectEng = true;
         DefectEngDes = defectDes;
-        SolarDateSolvedDefectEng = Helper.MiladiToShamsi(DateTime.Now.Date);
-        JulianDateSolvedDefectEng = DateTime.Now.Date;
+        SolarDateSolvedDefectEng = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
+        JulianDateSolvedDefectEng = DateTime.UtcNow.Date;
     }
 }

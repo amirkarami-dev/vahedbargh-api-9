@@ -39,7 +39,7 @@ namespace Coreapi.Infrastructure
         private async Task Authenticate()
         {
             ApiToken = string.Empty;
-            ExpiredDate = DateTime.Now;
+            ExpiredDate = DateTime.UtcNow;
 
             string url = string.Format("{0}{1}", _authenticationUrl, "/oauth/token");
 
@@ -61,14 +61,14 @@ namespace Coreapi.Infrastructure
                 var result = JsonConvert.DeserializeObject<AuthenticateResponse>(content);
 
                 ApiToken = result.access_token;
-                ExpiredDate = DateTime.Now.AddSeconds(result.expires_in);
+                ExpiredDate = DateTime.UtcNow.AddSeconds(result.expires_in);
             }
 
         }
 
         public async Task<SecurePaymentResponseModel> Pay(string token, string orderId, decimal amount, string currency, string ip)
         {
-            if (string.IsNullOrEmpty(ApiToken) || DateTime.Now >= ExpiredDate)
+            if (string.IsNullOrEmpty(ApiToken) || DateTime.UtcNow >= ExpiredDate)
                 await Authenticate();
 
             string url = string.Format("{0}{1}", _secureBaseUrl, "/v2/payments");

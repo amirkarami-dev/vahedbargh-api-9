@@ -156,8 +156,8 @@ namespace Coreapi.Domain.AggregatesModel.ElectProjectAgg
         public void UpdateAccepted()
         {
             Accepted = true;
-            JulianDateAccepted = DateTime.Now.Date;
-            SolarDateAccepted = Helper.MiladiToShamsi(DateTime.Now.Date);
+            JulianDateAccepted = DateTime.UtcNow.Date;
+            SolarDateAccepted = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
 
         }
 

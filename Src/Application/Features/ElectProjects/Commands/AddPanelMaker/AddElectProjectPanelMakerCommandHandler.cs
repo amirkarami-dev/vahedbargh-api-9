@@ -43,7 +43,7 @@ public class AddElectProjectPanelMakerCommandHandler:IRequestHandler<AddElectPro
 
         electProject.UpdatePanelMaker(panelMaker);
 
-        var resultSms = await _msService.SendSms2Params(panelMaker.MobileNumber,8700,Helper.MiladiToShamsiForSms(DateTime.Now),electProject.FileNumber.ToString());
+        var resultSms = await _msService.SendSms2Params(panelMaker.MobileNumber,8700,Helper.MiladiToShamsiForSms(DateTime.UtcNow),electProject.FileNumber.ToString());
         if (resultSms.Status != "success") throw new NotFoundException("پیام برای تابلوساز ارسال نشد");
 
         await _electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);

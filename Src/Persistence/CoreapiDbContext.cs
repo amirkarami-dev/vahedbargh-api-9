@@ -92,7 +92,7 @@ namespace Coreapi.Persistence
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
             foreach (var entry in ChangeTracker.Entries()
                 .Where(e => (
                    e.Entity is Client

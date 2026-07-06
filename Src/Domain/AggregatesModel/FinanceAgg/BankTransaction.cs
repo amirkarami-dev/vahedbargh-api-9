@@ -66,7 +66,7 @@ namespace Coreapi.Domain.AggregatesModel.FinanceAgg
         public string RetrievalReferenceNumber { get; private set; }
         public string SystemTraceAuditNumber { get; private set; }
         public string MaskedPan { get; set; }
-        public DateTime JulianLocalDateTime { get; private set; } = DateTime.Now;
+        public DateTime JulianLocalDateTime { get; private set; } = DateTime.UtcNow;
         public string SolarLocalDateTime { get; private set; }
         public bool Confirm { get; private set; }
 

@@ -88,7 +88,7 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.DeleteProj
                         throw new NotFoundException("مرحله پرونده مشکل دارد");
                 }
 
-            epp.UpdateCancelExpertStage(DateTime.Now, Helper.MiladiToShamsi(DateTime.Now), "حذف سیستمی", epp.ProjectLevelEnum);
+            epp.UpdateCancelExpertStage(DateTime.UtcNow, Helper.MiladiToShamsi(DateTime.UtcNow), "حذف سیستمی", epp.ProjectLevelEnum);
                 
 
 

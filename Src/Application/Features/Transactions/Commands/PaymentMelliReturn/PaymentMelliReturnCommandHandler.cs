@@ -71,8 +71,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliReturn
                             invoiceExpert.Amount, electProject.Client, 
                             electProject.Client.Id.ToString(),
                             GatewayTypeEnum.Custom,
-                            TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.Now,
-                            Helper.MiladiToShamsiFull(DateTime.Now),
+                            TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.UtcNow,
+                            Helper.MiladiToShamsiFull(DateTime.UtcNow),
                             bankTransaction.SystemTraceAuditNumber + "-" + childProject.FileNumber,
                             verifyResult.description + "-" + "توسط مالک" + "-" + $"Paren:{electProject.FileNumber}",
                             childProject.Id.ToString());
@@ -92,8 +92,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliReturn
                             electProject.Client.Id.ToString(),
                             GatewayTypeEnum.Custom,
                             TransactionTypeEnum.Client, TransactionStatusEnum.In,
-                            DateTime.Now,
-                            Helper.MiladiToShamsiFull(DateTime.Now),
+                            DateTime.UtcNow,
+                            Helper.MiladiToShamsiFull(DateTime.UtcNow),
                             bankTransaction.SystemTraceAuditNumber + "-" + childProject.FileNumber,
                             verifyResult.description + "-" + "توسط مالک" + "-" + $"Paren:{electProject.FileNumber}",
                             childProject.Id.ToString()
@@ -111,8 +111,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliReturn
                     Convert.ToInt64(verifyResult.result.amount), 
                     bankTransaction.Client, bankTransaction.UserId,
                     GatewayTypeEnum.IranKish,
-                    TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.Now,
-                    Helper.MiladiToShamsiFull(DateTime.Now),
+                    TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.UtcNow,
+                    Helper.MiladiToShamsiFull(DateTime.UtcNow),
                     bankTransaction.SystemTraceAuditNumber, 
                     verifyResult.description + "-" + "توسط مالک", 
                     bankTransaction.ProjectId);

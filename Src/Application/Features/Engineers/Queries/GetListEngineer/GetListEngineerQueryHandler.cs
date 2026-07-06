@@ -209,7 +209,7 @@ namespace Coreapi.Application.Features.Engineers.Queries.GetListEngineer
                     engineer.FullDescription = 
                         engineer.FullName
                         + " / " + txtExpert
-                        //+ " / " + "ت اعتبار:" + (engHistory.JulianValidityDate < DateTime.Now ? "اعتبارندارد" : engHistory.SolarValidityDate.Replace("/", "-")) 
+                        //+ " / " + "ت اعتبار:" + (engHistory.JulianValidityDate < DateTime.UtcNow ? "اعتبارندارد" : engHistory.SolarValidityDate.Replace("/", "-")) 
                         //+ " / " + "تعداد ارت:" + engineer.CountErtProcess
                         + " / " + "ضریب:" + engineer.Factor
                         + txtErt
@@ -218,7 +218,7 @@ namespace Coreapi.Application.Features.Engineers.Queries.GetListEngineer
                         //+ " / " + "ارت تخصیصی:" + engineer.CountErtQuota 
                         
                         + " / ";
-                    engineer.ExpiredDateWork = engHistory.JulianValidityDate < DateTime.Now;
+                    engineer.ExpiredDateWork = engHistory.JulianValidityDate < DateTime.UtcNow;
                     engineer.EngineerGradeTypeName = engHistory.EngineerGradeTypeName;
                     engineer.CanDoGroupBuilding = Helper.GetDoGroupBuilding(engineer.EngineerGradeTypeEnum);
                     engineer.EngineerGradeTypeEnum = engHistory.EngineerGradeTypeEnum;

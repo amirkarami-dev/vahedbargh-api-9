@@ -27,9 +27,9 @@ namespace Coreapi.Api.Controllers
 	public class UsersController : BaseController
 	{
 		private readonly IFileService fileService;
-		private readonly IS3Service _s3Service;
+		private readonly IS3ServicePublic _s3Service;
 
-		public UsersController(IFileService fileService, IS3Service s3Service)
+		public UsersController(IFileService fileService, IS3ServicePublic s3Service)
 		{
 			this.fileService = fileService;
 			_s3Service = s3Service;
@@ -98,7 +98,7 @@ namespace Coreapi.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetPhysicalFileS3([FromQuery] string path)
 		{
-			var currentDateTime = DateTime.Now;
+			var currentDateTime = DateTime.UtcNow;
 			var formattedDateTime = currentDateTime.ToString("yyyyMMdd_HHmmss");
 
 			var imageStream = await _s3Service.GetFullPath(path);

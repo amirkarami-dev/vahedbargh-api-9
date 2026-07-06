@@ -45,7 +45,7 @@ public class UpdateByEdcCommandHandler(
                             projectProcess.InspectionStatusEnum = InspectionStatusEnum.Undefined;
                             await smsService.SendSms3Params(projectProcess.Engineer.CellPhone, 14016,
                                 projectProcess.ElectProject.FileNumber.ToString()
-                                , "نقص در پرونده", Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                , "نقص در پرونده", Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
                         }
 
                         // در اینجا اگر پرونده ارت و بازرسی داشه باشد و نقص ارت باشد بازرسی هم نقص میخورد برای
@@ -59,7 +59,7 @@ public class UpdateByEdcCommandHandler(
                                 projectProcess.InspectionStatusEnum = InspectionStatusEnum.Undefined;
                                 await smsService.SendSms3Params(projectProcess.Engineer.CellPhone, 14016,
                                     projectProcess.ElectProject.FileNumber.ToString()
-                                    , "نقص در پرونده", Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                    , "نقص در پرونده", Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
                             }
                         }
 

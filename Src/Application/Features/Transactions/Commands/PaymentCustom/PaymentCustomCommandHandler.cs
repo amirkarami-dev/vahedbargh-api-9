@@ -64,8 +64,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentCustom
                                     $"برای این پرونده فاکتور ایجاد پرونده ثبت نشده است: {childProject.FileNumber}");
                             var transactionInspectionChild = new Transaction(invoiceExpert.Amount, client, client.Id.ToString(),
                                 GatewayTypeEnum.Custom,
-                                TransactionTypeEnum.Client, request.TransactionStatus, DateTime.Now,
-                                Helper.MiladiToShamsiFull(DateTime.Now), request.BtId.ToUpper() + "-" + childProject.FileNumber, "حسابداری:" +
+                                TransactionTypeEnum.Client, request.TransactionStatus, DateTime.UtcNow,
+                                Helper.MiladiToShamsiFull(DateTime.UtcNow), request.BtId.ToUpper() + "-" + childProject.FileNumber, "حسابداری:" +
                                 request.Des + "-" + request.SolarFishDate + "-" + request.FishNumber + "شماره فیش" + "-" + $"Paren:{electProject.FileNumber}", childProject.Id.ToString());
 
                             transactionRepository.Add(transactionInspectionChild);
@@ -80,8 +80,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentCustom
                                     $"برای این پرونده فاکتور ارت ثبت نشده است: {childProject.FileNumber}");
                             var transactionErtChild = new Transaction(invoiceErt.Amount, client, client.Id.ToString(),
                                 GatewayTypeEnum.Custom,
-                                TransactionTypeEnum.Client, request.TransactionStatus, DateTime.Now,
-                                Helper.MiladiToShamsiFull(DateTime.Now), request.BtId.ToUpper() + "-" + childProject.FileNumber, "حسابداری:" +
+                                TransactionTypeEnum.Client, request.TransactionStatus, DateTime.UtcNow,
+                                Helper.MiladiToShamsiFull(DateTime.UtcNow), request.BtId.ToUpper() + "-" + childProject.FileNumber, "حسابداری:" +
                                 request.Des + "-" + request.SolarFishDate + "-" + request.FishNumber + "شماره فیش" + "-" + $"Paren:{electProject.FileNumber}", childProject.Id.ToString());
 
                             transactionRepository.Add(transactionErtChild);
@@ -94,8 +94,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentCustom
 
                     var transaction = new Transaction(request.Amount, client, client.Id.ToString(),
                     GatewayTypeEnum.Custom,
-                    TransactionTypeEnum.Client, request.TransactionStatus, DateTime.Now,
-                    Helper.MiladiToShamsiFull(DateTime.Now), request.BtId.ToUpper(), "حسابداری:" +
+                    TransactionTypeEnum.Client, request.TransactionStatus, DateTime.UtcNow,
+                    Helper.MiladiToShamsiFull(DateTime.UtcNow), request.BtId.ToUpper(), "حسابداری:" +
                     request.Des + "-" + request.SolarFishDate + "-" + request.FishNumber + "شماره فیش", electProject.Id.ToString());
 
                     transactionRepository.Add(transaction);
@@ -109,11 +109,11 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentCustom
                 {
                     case TransactionStatusEnum.In:
                         await smsService.SendSms3Params(electProject.LandlordPhoneNumber, 8867, electProject.FileNumber.ToString(), request.Amount.ToString("N0"),
-                            "تاریخ:"+ Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                            "تاریخ:"+ Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
                         break;
                     case TransactionStatusEnum.Out:
                         await smsService.SendSms3Params(electProject.LandlordPhoneNumber, 8868, electProject.FileNumber.ToString(), request.Amount.ToString("N0"),
-                            "تاریخ:"+ Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                            "تاریخ:"+ Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
                         break;
                 }
 

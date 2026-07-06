@@ -73,7 +73,7 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublic
 
             var bankTransaction = new BankTransaction(GatewayTypeEnum.Melli, client, client.Id.ToString(),
                 PaymentTypeEnum.Online, resultForGetToken.result.token, paymentId,electProject.Id.ToString(), amountForPay,
-                Helper.MiladiToShamsiFull(DateTime.Now.Date));
+                Helper.MiladiToShamsiFull(DateTime.UtcNow.Date));
 
 
             bankTransactionRepository.Add(bankTransaction);

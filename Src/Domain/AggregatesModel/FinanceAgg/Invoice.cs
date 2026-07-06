@@ -24,8 +24,8 @@ namespace Coreapi.Domain.AggregatesModel.FinanceAgg
             Amount = amount;
             InvoiceStatus = InvoiceStatusEnum.Pending;
             InvoicePayType = invoicePayType;
-            JulianCreated = DateTime.Now.Date;
-            SolarCreated = Helper.MiladiToShamsi(DateTime.Now.Date);
+            JulianCreated = DateTime.UtcNow.Date;
+            SolarCreated = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
 
         }
 

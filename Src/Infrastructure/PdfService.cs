@@ -14,9 +14,9 @@ namespace Coreapi.Infrastructure
     {
         private readonly IWebHostEnvironment hostingEnvironment;
         private readonly IConfiguration configuration;
-        private readonly IS3Service s3Service;
+        private readonly IS3ServicePublic s3Service;
 
-        public PdfService(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, IS3Service s3Service)
+        public PdfService(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, IS3ServicePublic s3Service)
         {
             this.hostingEnvironment = hostingEnvironment;
             this.configuration = configuration;

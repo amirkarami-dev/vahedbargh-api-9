@@ -27,7 +27,7 @@ public class EppApprovedCommandHandler(
     IQuarterTariffRepository quarterTariffRepository,
     IBuildingTariffRepository buildingTariffRepository,
     IElectProjectFileRepository electProjectFileRepository,
-    IS3Service s3Service,
+    IS3ServicePublic s3Service,
     IReportService reportService,
     ICommentEngFormRepository commentEngFormRepository,
     IElectProjectErtFormRepository electProjectErtFormRepository,
@@ -112,7 +112,7 @@ public class EppApprovedCommandHandler(
                     }
                 case ProjectLevelEnum.ErtStage:
                     {
-                        if (projectProcess.Accepted && Helper.GetDiffDay(projectProcess.JulianDateAccepted, DateTime.Now) <= 30) throw new NotFoundException("این پرونده را قبلا قبول کرده اید و تا یک ماه قابل کنسل نیست ");
+                        if (projectProcess.Accepted && Helper.GetDiffDay(projectProcess.JulianDateAccepted, DateTime.UtcNow) <= 30) throw new NotFoundException("این پرونده را قبلا قبول کرده اید و تا یک ماه قابل کنسل نیست ");
 
 
                         if (electProject.ProjectLevelEnum is ProjectLevelEnum.ApproveErtStage)
@@ -150,7 +150,7 @@ public class EppApprovedCommandHandler(
             //    EppId = projectProcess.Id
             //}, cancellationToken);
 
-            projectProcess.UpdateCancelExpertStage(DateTime.Now, Helper.MiladiToShamsi(DateTime.Now), request.Des, projectProcess.ProjectLevelEnum);
+            projectProcess.UpdateCancelExpertStage(DateTime.UtcNow, Helper.MiladiToShamsi(DateTime.UtcNow), request.Des, projectProcess.ProjectLevelEnum);
 
             await electProjectProcessRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -158,7 +158,7 @@ public class EppApprovedCommandHandler(
 
             await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 7396,
                 "کنسل شدن پرونده شما توسط کارشناس آقای:", projectProcess.Engineer.FullName,
-                "وضعیت پرونده:در انتظار مجدد تخصیص", Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                "وضعیت پرونده:در انتظار مجدد تخصیص", Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
             return "ok";
 
@@ -280,7 +280,7 @@ public class EppApprovedCommandHandler(
                 electProject.UpdateProjectLevel(ProjectLevelEnum.ApproveStage);
 
                 // آپدیت کردن پروسس به استیت تایید شده توسط کارشناس در مرحله کارشناسی
-                projectProcess.UpdateDoneExpertStage(DateTime.Now.Date, Helper.MiladiToShamsi(DateTime.Now.Date), request.Des);
+                projectProcess.UpdateDoneExpertStage(DateTime.UtcNow.Date, Helper.MiladiToShamsi(DateTime.UtcNow.Date), request.Des);
 
 
             
@@ -386,8 +386,8 @@ public class EppApprovedCommandHandler(
                         // ایجاد تراکنش برداشت مرحله ایجاد پرونده برای بازرسی
                         // اگر پرونده بزرگ باشد مقدا مبلغ تراکنش صفر میشود چون در تراکنش فرزندانش کسر میشود
                         var transaction = new Transaction(ertApprovedFee, client, client.Id.ToString(),
-                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                            Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                             $"برداشت تاییدیه ارت:{electProject.FileNumber}", electProject.Id.ToString());
                         invoice.Done(transaction);
 
@@ -470,7 +470,7 @@ public class EppApprovedCommandHandler(
 				electProject.UpdateProjectLevel(ProjectLevelEnum.ApproveStage);
 			}
 
-			projectProcess.UpdateDoneErtStage(DateTime.Now.Date, Helper.MiladiToShamsi(DateTime.Now.Date), request.Des);
+			projectProcess.UpdateDoneErtStage(DateTime.UtcNow.Date, Helper.MiladiToShamsi(DateTime.UtcNow.Date), request.Des);
             // اساین کردن فاکتور به پروسس
             //invoiceErtProject.UpdateElectProjectProcess(projectProcess);
 
@@ -502,7 +502,7 @@ public class EppApprovedCommandHandler(
 
             // آپدیت کردن پرونده به مرحله تست و تحویل تایید شده
             electProject.UpdateProjectLevel(ProjectLevelEnum.ApproveTestDeliveryStage);
-            projectProcess.UpdateDoneTestAndDeliveryStage(DateTime.Now.Date, Helper.MiladiToShamsi(DateTime.Now.Date), request.Des);
+            projectProcess.UpdateDoneTestAndDeliveryStage(DateTime.UtcNow.Date, Helper.MiladiToShamsi(DateTime.UtcNow.Date), request.Des);
 
 
             // تایید کردن نهایی پرونده توسط کارشناس

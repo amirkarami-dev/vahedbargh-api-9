@@ -7,9 +7,9 @@ namespace Coreapi.Application.Features.User.Queries.GetUserFile
 {
     public class GetUserFileQueryHandler : IRequestHandler<GetUserFileQuery, byte[]>
     {
-        private readonly IS3Service s3Service;
+        private readonly IS3ServicePublic s3Service;
 
-        public GetUserFileQueryHandler(IS3Service s3Service)
+        public GetUserFileQueryHandler(IS3ServicePublic s3Service)
         {
             this.s3Service = s3Service;
         }

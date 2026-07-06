@@ -58,7 +58,7 @@ public class AutoCancelCommandHandler:IRequestHandler<AutoCancelCommand,int>
                     break;
                 }
             }
-            epp.UpdateCancelExpertStage(DateTime.Now, Helper.MiladiToShamsi(DateTime.Now), "کنسل سیستمی", epp.ProjectLevelEnum);
+            epp.UpdateCancelExpertStage(DateTime.UtcNow, Helper.MiladiToShamsi(DateTime.UtcNow), "کنسل سیستمی", epp.ProjectLevelEnum);
         }
         await electProjectProcessRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         return 0;

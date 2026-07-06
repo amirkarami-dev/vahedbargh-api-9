@@ -45,8 +45,8 @@ public class UpsertTicketCommandHandler(
 
         var message = new SupportMessage(
             request.Message, 
-            Helper.MiladiToShamsiForSupport(DateTime.Now), 
-            DateTime.Now,
+            Helper.MiladiToShamsiForSupport(DateTime.UtcNow), 
+            DateTime.UtcNow,
             fromUser.Id,
             request.FileName, 
             toUser.Id, 

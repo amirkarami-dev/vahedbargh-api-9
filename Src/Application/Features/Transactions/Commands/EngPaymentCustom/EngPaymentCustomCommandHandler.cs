@@ -53,8 +53,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.EngPaymentCustom
 
             var transaction = new Transaction(request.Amount, client, engineer.UserId,
                 GatewayTypeEnum.Custom,
-                TransactionTypeEnum.Client, request.TransactionStatus, DateTime.Now,
-                Helper.MiladiToShamsiFull(DateTime.Now), request.BtId.ToUpper(), "واریز حسابداری:" +
+                TransactionTypeEnum.Client, request.TransactionStatus, DateTime.UtcNow,
+                Helper.MiladiToShamsiFull(DateTime.UtcNow), request.BtId.ToUpper(), "واریز حسابداری:" +
                 request.Des + "-" + "به تاریخ:"  + request.SolarFishDate + "-" + "شماره فیش:" + request.FishNumber,null);
             transactionRepository.Add(transaction);
             await transactionRepository.UnitOfWork.SaveChangesAsync(cancellationToken);

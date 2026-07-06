@@ -12,10 +12,10 @@ namespace Coreapi.Application.Features.Notification.Commands.RequestDemo
         public async Task<string> Handle(RequestDemoCommand request, CancellationToken cancellationToken)
         {
             // send to user
-            await smsService.SendSms4Params(request.Mobile, 7396, "درخواست دمو ثبت شد"," به زودی با شما تماس خواهیم گرفت ", " با تشکر:کرمی 09120833933", Helper.MiladiToShamsiForSms(DateTime.Now));
+            await smsService.SendSms4Params(request.Mobile, 7396, "درخواست دمو ثبت شد"," به زودی با شما تماس خواهیم گرفت ", " با تشکر:کرمی 09120833933", Helper.MiladiToShamsiForSms(DateTime.UtcNow));
 
             // send internal notification
-            await smsService.SendSms4Params("09120833933", 7396, "یک درخواست دمو ثبت شد", request.Mobile , request.Name, Helper.MiladiToShamsiForSms(DateTime.Now));
+            await smsService.SendSms4Params("09120833933", 7396, "یک درخواست دمو ثبت شد", request.Mobile , request.Name, Helper.MiladiToShamsiForSms(DateTime.UtcNow));
 
             return "درخواست شما ثبت شد";
         }

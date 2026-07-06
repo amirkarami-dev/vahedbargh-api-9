@@ -41,7 +41,7 @@ namespace Coreapi.Infrastructure.Identity
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 Active = true,
                 Type = CurrentUserTypeEnum.JWT
             };
@@ -64,7 +64,7 @@ namespace Coreapi.Infrastructure.Identity
                 Email = email,
                 FirstName = firstName,
                 LastName = lastName,
-                Created = DateTime.Now,
+                Created = DateTime.UtcNow,
                 Active = true,
                 ClientId = clientId,
                 IntegrateId = id,

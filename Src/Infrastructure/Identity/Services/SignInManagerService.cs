@@ -385,7 +385,7 @@ namespace Coreapi.Infrastructure.Identity
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(120),
+                Expires = DateTime.UtcNow.AddMinutes(120),
              
                 SigningCredentials = creds
             };
@@ -423,7 +423,7 @@ namespace Coreapi.Infrastructure.Identity
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(120),
+                Expires = DateTime.UtcNow.AddMinutes(120),
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -447,8 +447,8 @@ namespace Coreapi.Infrastructure.Identity
 
                 Valid = true,
                 RefreshToken = refreshToken,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
 
             };
 
@@ -466,8 +466,8 @@ namespace Coreapi.Infrastructure.Identity
 
                 Valid = false,
                 RefreshToken = null,
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
 
             };
 

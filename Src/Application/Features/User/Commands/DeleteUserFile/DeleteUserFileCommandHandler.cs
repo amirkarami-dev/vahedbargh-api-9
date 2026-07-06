@@ -14,10 +14,10 @@ namespace Coreapi.Application.Features.User.Commands.DeleteUserFile
     internal class DeleteUserFileCommandHandler:IRequestHandler<DeleteUserFileCommand>
     {
         private readonly IUserFileRepository _userFileRepository;
-        private readonly IS3Service _s3Service;
+        private readonly IS3ServicePublic _s3Service;
 
 
-        public DeleteUserFileCommandHandler(IUserFileRepository userFileRepository, IS3Service s3Service)
+        public DeleteUserFileCommandHandler(IUserFileRepository userFileRepository, IS3ServicePublic s3Service)
         {
             _userFileRepository = userFileRepository;
             _s3Service = s3Service;

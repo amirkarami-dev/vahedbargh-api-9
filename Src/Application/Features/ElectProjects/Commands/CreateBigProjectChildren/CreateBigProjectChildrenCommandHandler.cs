@@ -146,8 +146,8 @@ public class CreateBigProjectChildrenCommandHandler(
                     buildingTariff,
                     null,
                     ProjectLevelEnum.NullStage,
-                    DateTime.Now.Date,
-                    Helper.MiladiToShamsi(DateTime.Now.Date),
+                    DateTime.UtcNow.Date,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date),
                     false, false, true,
                     request.IsTestAndDelivery,
                     request.PanelNeed,
@@ -171,8 +171,8 @@ public class CreateBigProjectChildrenCommandHandler(
 
                 var transactionChild = new Transaction(
                     invoiceInspectionChild.Amount, client, client.Id.ToString(),
-                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                    Helper.MiladiToShamsi(DateTime.Now.Date), childProject.FileNumber.ToString(),
+                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date), childProject.FileNumber.ToString(),
                     $"برداشت ایجاد پرونده بازرسی:{childProject.FileNumber}", childProject.Id.ToString());
                 invoiceInspectionChild.Done(transactionChild);
 
@@ -184,8 +184,8 @@ public class CreateBigProjectChildrenCommandHandler(
 
                 var transactionServices = new Transaction(
                     amountPayServiceChild, client, client.Id.ToString(),
-                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                    Helper.MiladiToShamsi(DateTime.Now.Date), childProject.FileNumber.ToString(),
+                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date), childProject.FileNumber.ToString(),
                     $"برداشت هزینه خدمات:{childProject.FileNumber}", childProject.Id.ToString());
                 invoiceServices.Done(transactionServices);
 
@@ -251,8 +251,8 @@ public class CreateBigProjectChildrenCommandHandler(
                     buildingTariff,
                     ertTariff,
                     ProjectLevelEnum.NullStage,
-                    DateTime.Now.Date,
-                    Helper.MiladiToShamsi(DateTime.Now.Date),
+                    DateTime.UtcNow.Date,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date),
                     request.IsEarthSystem, false, false, false, false,
                     request.FoundationElectrodeArea,
                     request.IsNeedEb, 0,
@@ -271,8 +271,8 @@ public class CreateBigProjectChildrenCommandHandler(
 
                 var transactionChild = new Transaction(
                     amountPayErtSystem, client, client.Id.ToString(),
-                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                    Helper.MiladiToShamsi(DateTime.Now.Date), childErtProject.FileNumber.ToString(),
+                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date), childErtProject.FileNumber.ToString(),
                     $"برداشت 9 درصد نظام:ارت:{childErtProject.FileNumber}", childErtProject.Id.ToString());
                 invoiceErtSystemChild.Done(transactionChild);
 
@@ -284,8 +284,8 @@ public class CreateBigProjectChildrenCommandHandler(
 
                 var transactionServices = new Transaction(
                     amountPayService, client, client.Id.ToString(),
-                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                    Helper.MiladiToShamsi(DateTime.Now.Date), childErtProject.FileNumber.ToString(),
+                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date), childErtProject.FileNumber.ToString(),
                     $"برداشت هزینه خدمات:{childErtProject.FileNumber}", childErtProject.Id.ToString());
                 invoiceServices.Done(transactionServices);
 
@@ -347,8 +347,8 @@ public class CreateBigProjectChildrenCommandHandler(
                     existingInTransaction.GatewayType,
                     TransactionTypeEnum.Client,
                     TransactionStatusEnum.In,
-                    DateTime.Now,
-                    Helper.MiladiToShamsiFull(DateTime.Now),
+                    DateTime.UtcNow,
+                    Helper.MiladiToShamsiFull(DateTime.UtcNow),
                     existingInTransaction.BankTransactionId + "-" + childProject.FileNumber,
                     existingInTransaction.Des + " - کارشناسی" +
                     $" - پرونده اصلی:{electProject.FileNumber}" +
@@ -366,8 +366,8 @@ public class CreateBigProjectChildrenCommandHandler(
                     existingInTransaction.GatewayType,
                     TransactionTypeEnum.Client,
                     TransactionStatusEnum.In,
-                    DateTime.Now,
-                    Helper.MiladiToShamsiFull(DateTime.Now),
+                    DateTime.UtcNow,
+                    Helper.MiladiToShamsiFull(DateTime.UtcNow),
                     existingInTransaction.BankTransactionId + "-" + childErtProject.FileNumber,
                     existingInTransaction.Des + " - ارت" +
                     $" - پرونده اصلی:{electProject.FileNumber}" +

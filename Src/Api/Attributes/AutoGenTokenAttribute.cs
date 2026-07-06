@@ -42,7 +42,7 @@ namespace Coreapi.Api.Attributes
                 var userId = tokenS.Claims.First(claim => claim.Type == "sid").Value;
              
                 var expDate = tokenS.ValidTo;
-                if (expDate < DateTime.Now.AddMinutes(30))
+                if (expDate < DateTime.UtcNow.AddMinutes(30))
                 {
                     var token = await sinInManager.RefreshToken(userId, xrefresh, false);
                     // context.HttpContext.Response.Headers["x-access-token"] = token.Token;

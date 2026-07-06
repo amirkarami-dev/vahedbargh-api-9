@@ -41,8 +41,8 @@ public class AmountSmsCommandHandler(
 					if (amount >= 0) throw new NotFoundException("بالانس پرونده صفر یا بیشتر می باشد");
 
 					var param = $"e={encodeGuid}&a={amountForPay}";
-                await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 9593, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.Now),
-					//await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 16131, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.Now),
+                await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 9593, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.UtcNow),
+					//await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 16131, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.UtcNow),
 					amountForPay.ToString("N0") + "ریال", param);
                 break;
             }

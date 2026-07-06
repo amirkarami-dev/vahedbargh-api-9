@@ -25,7 +25,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.SubmitByAdmin
         IElectProjectFileRepository electProjectFileRepository,
         ISmsService smsService,
         IReportService reportService,
-        IS3Service s3Service,
+        IS3ServicePublic s3Service,
         IElectProjectProcessRepository electProjectProcessRepository,
         ICommentEngFormRepository commentEngFormRepository,
         ICheckListFormRepository checkListFormRepository,
@@ -277,7 +277,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.SubmitByAdmin
             await electProjectRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
 
             await smsService.SendSms2Params(electProject.LandlordPhoneNumber, 9857,
-                Helper.MiladiToShamsiForSms(DateTime.Now.Date), electProject.ElectRequestNumber == 0 ? electProject.FileNumber.ToString() : electProject.ElectRequestNumber.ToString());
+                Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date), electProject.ElectRequestNumber == 0 ? electProject.FileNumber.ToString() : electProject.ElectRequestNumber.ToString());
 
             return electProject.Id.ToString();
         }

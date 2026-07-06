@@ -150,8 +150,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                             client,
                             client.Id.ToString(),
                             GatewayTypeEnum.System,
-                            TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                            Helper.MiladiToShamsi(DateTime.Now.Date),
+                            TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date),
                             electProject.FileNumber.ToString(),
                             $"برداشت ایجاد پرونده {(request.HasSupervision ? "بازرسی" : "بازرسی و نظارت")}: {electProject.FileNumber}",
                             electProject.Id.ToString());
@@ -176,8 +176,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
 
                         // ایجاد تراکنش برداشت مرحله ایجاد پرونده در هنگام تخصیص
                         var transaction = new Transaction(amountPayErtSystem, client, client.Id.ToString(),
-                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                            Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                             $"برداشت 9 درصد نظام:ارت:{electProject.FileNumber}", electProject.Id.ToString());
                         invoiceErtSystem.Done(transaction);
 
@@ -293,8 +293,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                                     var transaction = new Transaction(
                                         invoiceInspection.Amount, client, client.Id.ToString(),
                                         GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out,
-                                        DateTime.Now,
-                                        Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                                        DateTime.UtcNow,
+                                        Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                                         $"برداشت ایجاد پرونده کارشناسی:{electProject.FileNumber}",
                                         electProject.Id.ToString());
                                     invoiceInspection.Done(transaction);
@@ -334,7 +334,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
 
                                             var oldDes = invoiceCreatedProject.Transaction.Des;
                                             invoiceCreatedProject.Transaction.UpdateDes(oldDes +
-                                                $"-اصلاحیه-تایخ:   {Helper.MiladiToShamsi(DateTime.Now.Date)}-");
+                                                $"-اصلاحیه-تایخ:   {Helper.MiladiToShamsi(DateTime.UtcNow.Date)}-");
                                         }
                                         amountPay += invoiceCreatedProject.Amount;
 
@@ -365,7 +365,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
 
                                         var oldDes = invoiceExpertStage.Transaction.Des;
                                         invoiceExpertStage.Transaction.UpdateDes(oldDes +
-                                            $"-اصلاحیه-تایخ:   {Helper.MiladiToShamsi(DateTime.Now.Date)}-");
+                                            $"-اصلاحیه-تایخ:   {Helper.MiladiToShamsi(DateTime.UtcNow.Date)}-");
 
                                         amountPay += invoiceExpertStage.Amount;
 
@@ -400,8 +400,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                                         var transaction = new Transaction(amountPayErtSystem, client,
                                             client.Id.ToString(),
                                             GatewayTypeEnum.System, TransactionTypeEnum.Client,
-                                            TransactionStatusEnum.Out, DateTime.Now,
-                                            Helper.MiladiToShamsi(DateTime.Now.Date),
+                                            TransactionStatusEnum.Out, DateTime.UtcNow,
+                                            Helper.MiladiToShamsi(DateTime.UtcNow.Date),
                                             electProject.FileNumber.ToString(),
                                             $"برداشت 7 درصد نظام:ارت:{electProject.FileNumber}",
                                             electProject.Id.ToString());
@@ -423,7 +423,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                                             invoiceErtSystem.Transaction.UpdateAmount(amountPayErtSystem);
                                             var oldDes = invoiceErtSystem.Transaction.Des;
                                             invoiceErtSystem.Transaction.UpdateDes(oldDes +
-                                                $"-اصلاحیه-تایخ:{Helper.MiladiToShamsi(DateTime.Now.Date)}-");
+                                                $"-اصلاحیه-تایخ:{Helper.MiladiToShamsi(DateTime.UtcNow.Date)}-");
 
                                         } 
 
@@ -449,7 +449,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                             invoiceCreatedProject.Transaction.UpdateAmount(amountPayTestAndDelivery);
                             var oldDes = invoiceCreatedProject.Transaction.Des;
                             invoiceCreatedProject.Transaction.UpdateDes(
-                                oldDes + $"-اصلاحیه-تایخ:{Helper.MiladiToShamsi(DateTime.Now.Date)}-");
+                                oldDes + $"-اصلاحیه-تایخ:{Helper.MiladiToShamsi(DateTime.UtcNow.Date)}-");
 
                             amountPay += amountPayTestAndDelivery;
 
@@ -510,8 +510,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                         // ایجاد تراکنش برداشت خدمات پرونده 
                         var transactionServices = new Transaction(
                             amountServices, client, client.Id.ToString(),
-                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                            Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                             $"برداشت هزینه خدمات:{electProject.FileNumber}", electProject.Id.ToString());
                         invoiceServicesNew.Done(transactionServices);
                     }
@@ -521,7 +521,7 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Update
                         invoiceServices.UpdateAmount(amountServices);
                         invoiceServices.Transaction.UpdateAmount(amountServices);
                         var oldDes = invoiceServices.Transaction.Des;
-                        invoiceServices.Transaction.UpdateDes(oldDes + $"-اصلاحیه-تایخ:{Helper.MiladiToShamsi(DateTime.Now.Date)}-");
+                        invoiceServices.Transaction.UpdateDes(oldDes + $"-اصلاحیه-تایخ:{Helper.MiladiToShamsi(DateTime.UtcNow.Date)}-");
                     }
 
                 }

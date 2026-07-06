@@ -23,7 +23,7 @@ public class UpsertSupportCommandHandler(
     ISupportMessageRepository supportMessageRepository,
     ISupportFileRepository supportFileRepository,
     IEngineerRepository engineerRepository,
-    IS3Service s3ServiceLiara,
+    IS3ServicePublic s3Service,
     INotificationService notificationService,
     ISmsService smsService)
     : IRequestHandler<UpsertSupportCommand, string>
@@ -54,8 +54,8 @@ public class UpsertSupportCommandHandler(
                 fromUser.FirstName,
                 toUser.FirstName, 
                 UserType.Engineer,
-                Helper.MiladiToShamsi(DateTime.Now), 
-                DateTime.Now, 
+                Helper.MiladiToShamsi(DateTime.UtcNow), 
+                DateTime.UtcNow, 
                 "", 
                 null, 
                 request.Title + ":" + request.Message, 
@@ -65,8 +65,8 @@ public class UpsertSupportCommandHandler(
 
             var message = new SupportMessage(
                 request.Message, 
-                Helper.MiladiToShamsi(DateTime.Now), 
-                DateTime.Now,
+                Helper.MiladiToShamsi(DateTime.UtcNow), 
+                DateTime.UtcNow,
                 fromUser.Id,
                 null,
                 toUser.Id,
@@ -78,8 +78,8 @@ public class UpsertSupportCommandHandler(
 
             if (request.File is not null)
             {
-                var fileName = request.FileName.Split('.')[0] + Helper.MiladiToShamsiForName(DateTime.Now) + "." + request.FileName.Split('.')[1];
-                await s3ServiceLiara.UploadFileAttach(
+                var fileName = request.FileName.Split('.')[0] + Helper.MiladiToShamsiForName(DateTime.UtcNow) + "." + request.FileName.Split('.')[1];
+                await s3Service.UploadFileAttach(
                     request.File, fileName, request.FolderName, support.Id.ToString());
                 var supportFile = new SupportFile(
                     request.Name + "-" + support.Id,
@@ -100,7 +100,7 @@ public class UpsertSupportCommandHandler(
             if (request.SendSms)
                 await smsService.SendSms3Params(toUser.PhoneNumber, 15374, request.Title,
                     request.FileNumber == 0 ? "ندارد" : request.FileNumber.ToString(),
-                    Helper.MiladiToShamsiForSms(DateTime.Now));
+                    Helper.MiladiToShamsiForSms(DateTime.UtcNow));
 
         await supportRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
         return "Ok";

@@ -26,9 +26,9 @@ public class ReportService:IReportService
 
     private readonly IWebHostEnvironment hostingEnvironment;
     private readonly IConfiguration configuration;
-    private readonly IS3Service s3Service;
+    private readonly IS3ServicePublic s3Service;
 
-    public ReportService(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, IS3Service s3Service)
+    public ReportService(IWebHostEnvironment hostingEnvironment, IConfiguration configuration, IS3ServicePublic s3Service)
     {
         Stimulsoft.Base.StiLicense.Key =
             "6vJhGtLLLz2GNviWmUTrhSqnOItdDwjBylQzQcAOiHn0s4gy0Fr5YoUZ9V00Y0igCSFQzwEqYBh/N77k4f0fWXTHW5rqeBNLkaurJDenJ9o97TyqHs9HfvINK18Uwzsc/bG01Rq+x3H3Rf+g7AY92gvWmp7VA2Uxa30Q97f61siWz2dE5kdBVcCnSFzC6awE74JzDcJMj8OuxplqB1CYcpoPcOjKy1PiATlC3UsBaLEXsok1xxtRMQ283r282tkh8XQitsxtTczAJBxijuJNfziYhci2jResWXK51ygOOEbVAxmpflujkJ8oEVHkOA/CjX6bGx05pNZ6oSIu9H8deF94MyqIwcdeirCe60GbIQByQtLimfxbIZnO35X3fs/94av0ODfELqrQEpLrpU6FNeHttvlMc5UVrT4K+8lPbqR8Hq0PFWmFrbVIYSi7tAVFMMe2D1C59NWyLu3AkrD3No7YhLVh7LV0Tttr/8FrcZ8xirBPcMZCIGrRIesrHxOsZH2V8t/t0GXCnLLAWX+TNvdNXkB8cF2y9ZXf1enI064yE5dwMs2fQ0yOUG/xornE";
@@ -74,7 +74,7 @@ public class ReportService:IReportService
             data.Tables.Add(dataTable);
             report.Dictionary.Databases.Clear();
 
-            report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+            report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
             report.Dictionary.Variables["landlordName"].Value = electProject.LandlordName;
             report.Dictionary.Variables["fileNumber"].Value = electProject.FileNumber.ToString();
             report.Dictionary.Variables["electRequestNumber"].Value = electProject.ElectRequestNumber.ToString();
@@ -133,7 +133,7 @@ public class ReportService:IReportService
             throw new NotFoundException("خطا در ایجاد گزارش");
 
         // Set project and general variables
-        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
         report.Dictionary.Variables["landlordName"].Value = electProject.LandlordName;
         report.Dictionary.Variables["fileNumber"].Value = electProject.FileNumber.ToString();
         report.Dictionary.Variables["electRequestNumber"].Value = electProject.ElectRequestNumber.ToString();
@@ -190,7 +190,7 @@ public class ReportService:IReportService
         report.Dictionary.Databases.Clear();
 
         report.Dictionary.Variables["engName"].Value = engineer.FullName;
-        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
         report.Dictionary.Variables["landlordName"].Value = electProject.LandlordName;
         report.Dictionary.Variables["address"].Value = electProject.Address; 
         report.Dictionary.Variables["fileNumber"].Value = electProject.FileNumber.ToString();
@@ -255,7 +255,7 @@ public class ReportService:IReportService
         // Combine engineer full names
         var engineerNames = string.Join(" - ", engineerAssignPairs.Select(e => e.engineer.FullName));
         report.Dictionary.Variables["engName"].Value = engineerNames;
-        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
         report.Dictionary.Variables["landlordName"].Value = electProject.LandlordName;
         report.Dictionary.Variables["address"].Value = electProject.Address;
         report.Dictionary.Variables["fileNumber"].Value = electProject.FileNumber.ToString();
@@ -321,7 +321,7 @@ public class ReportService:IReportService
         report.Dictionary.Databases.Clear();
 
         report.Dictionary.Variables["engName"].Value = engineer.FullName;
-        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
         report.Dictionary.Variables["solarDeliverEng"].Value = solarDeliverEng;
         report.Dictionary.Variables["landlordName"].Value = electProjectErtForm.ElectProject.LandlordName;
         report.Dictionary.Variables["address"].Value = electProjectErtForm.ElectProject.Address;
@@ -384,7 +384,7 @@ public class ReportService:IReportService
 
         report.Dictionary.Variables["engName"].Value = engineer.FullName;
         report.Dictionary.Variables["workPermitNum"].Value = workPermitNum.ToString();
-        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
         report.Dictionary.Variables["solarDeliverEng"].Value = solarDeliverEng;
         report.Dictionary.Variables["landlordName"].Value = electProjectErtForm.ElectProject.LandlordName;
         report.Dictionary.Variables["address"].Value = electProjectErtForm.ElectProject.Address;
@@ -447,7 +447,7 @@ public class ReportService:IReportService
         report.Dictionary.Databases.Clear();
 
         report.Dictionary.Variables["engName"].Value = engName;
-        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.Now.Date);
+        report.Dictionary.Variables["solarDate"].Value = Helper.MiladiToShamsi(DateTime.UtcNow.Date);
         report.Dictionary.Variables["landlordName"].Value = Helper.RemoveDiacritics(electProject.LandlordName);
         report.Dictionary.Variables["address"].Value = Helper.RemoveDiacritics( electProject.Address);
         report.Dictionary.Variables["fileNumber"].Value = electProject.FileNumber.ToString();

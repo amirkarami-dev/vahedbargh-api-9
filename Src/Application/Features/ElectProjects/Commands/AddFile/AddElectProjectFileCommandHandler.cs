@@ -19,7 +19,7 @@ public class AddElectProjectFileCommandHandler(
     ICurrentUser currentUser,
     IFileService fileService,
     IUserManager userManager,
-    IS3Service s3Service,
+    IS3ServicePublic s3Service,
     IElectProjectProcessRepository electProjectProcessRepository)
     : IRequestHandler<AddElectProjectFileCommand, List<Guid>>
 {
@@ -33,7 +33,7 @@ public class AddElectProjectFileCommandHandler(
         if (request.File is null) throw new NotAllowedException("فایل آپلود نشده است");
         var listGuid = JsonSerializer.Deserialize<List<Guid>>(request.ElectProjectId[0]);
         if (listGuid is null) throw new NotAllowedException("پرونده ای وجود ندارد");
-        var fileName = request.FileName.Split('.')[0] + Helper.MiladiToShamsiFileName(DateTime.Now) + "." + request.FileName.Split('.')[1];
+        var fileName = request.FileName.Split('.')[0] + Helper.MiladiToShamsiFileName(DateTime.UtcNow) + "." + request.FileName.Split('.')[1];
         var fileType = request.FileName.Split('.')[1].ToUpper();
 
         if (!currentUser.Role.Contains("Administrator") && !currentUser.Role.Contains("Section") && !currentUser.Role.Contains("ElectAdmin"))

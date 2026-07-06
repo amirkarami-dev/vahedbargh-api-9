@@ -38,8 +38,8 @@ public class Support
 
     public void ClosedSupport(bool closed)
     {
-        JulianEndSupport = DateTime.Now;
-        SolarEndSupport = Helper.MiladiToShamsi(DateTime.Now);
+        JulianEndSupport = DateTime.UtcNow;
+        SolarEndSupport = Helper.MiladiToShamsi(DateTime.UtcNow);
         Closed = closed;
     }
 

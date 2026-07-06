@@ -163,8 +163,8 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
                             lastQuarterTariff, 
                             electProject.JulianRegisterDate, 
                             electProject.SolarRegisterDate, 
-                            DateTime.Now.Date, 
-                            Helper.MiladiToShamsi(DateTime.Now.Date), 
+                            DateTime.UtcNow.Date, 
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date), 
                             null, null, null);
                         electProjectProcessRepository.Add(electProjectProcess);
 
@@ -176,7 +176,7 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
                         var levelSms = electProject.IsTestAndDelivery ?$"تست وتحویل-ناظر:{electProject.SupervisorName + electProject.SupervisorPhoneNumber}": "-مرحله بازرسی-" ;
 
                         await smsService.SendSms4Params(engineer.CellPhone, 9311, electProject.LandlordName,electProject.LandlordPhoneNumber,
-                            electProject.FileNumber + levelSms, Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                            electProject.FileNumber + levelSms, Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
                         // ارسال پیام به ناظر
                         if (electProject.IsTestAndDelivery)
@@ -184,12 +184,12 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
 
                             await smsService.SendSms5Params(electProject.SupervisorPhoneNumber, 9382,
                                 electProject.FileNumber.ToString(), electProject.LandlordName, engineer.FullName,
-                                engineer.CellPhone, Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                engineer.CellPhone, Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
 
                             await smsService.SendSms5Params(electProject.LandlordPhoneNumber, 9312, electProject.FileNumber.ToString(),
                                 "مجری تست و تحویل", engineer.FullName, engineer.CellPhone,
-                                Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
 
                         }
@@ -197,7 +197,7 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
                         {
                             await smsService.SendSms5Params(electProject.LandlordPhoneNumber, 9312, electProject.FileNumber.ToString(),
                                 "بازرسی", engineer.FullName, engineer.CellPhone,
-                                Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
                         }
                     }
@@ -231,7 +231,7 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
                                 ProjectLevelEnum.ErtStage, electProject.BuildingTariff,
                                 InspectionStatusEnum.Undefined, false, 0, lastQuarterTariff,
                                 electProject.JulianRegisterDate, electProject.SolarRegisterDate, 
-                                DateTime.Now, Helper.MiladiToShamsi(DateTime.Now), 
+                                DateTime.UtcNow, Helper.MiladiToShamsi(DateTime.UtcNow), 
                                 null, null, null);
                             electProjectProcessRepository.Add(electProjectProcess);
                             // آپدیت کردن مرحله پرونده به مرحله ارت
@@ -241,12 +241,12 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
                             // ارسال اسمس  به کارشناس
 
                             await smsService.SendSms4Params(engineer.CellPhone, 9311, electProject.LandlordName,electProject.LandlordPhoneNumber,
-                                electProject.FileNumber + "-مرحله ارت-", Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                electProject.FileNumber + "-مرحله ارت-", Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
                             // ارسال اسمس به مالک
                         await smsService.SendSms5Params(electProject.LandlordPhoneNumber, 9312, electProject.FileNumber.ToString(),
                                 "مجری ارت", engineer.FullName, engineer.CellPhone,
-                                Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
 
                     }
@@ -296,19 +296,19 @@ namespace Coreapi.Application.Features.ElectProjectProcesses.Commands.ProjectPro
                         var electProjectProcess = new ElectProjectProcess(client, currentUser.UserId, electProject, engineer,
                                 ProjectLevelEnum.ErtStage, electProject.BuildingTariff, InspectionStatusEnum.Undefined,
                                 false, 0, lastQuarterTariff, electProject.JulianRegisterDate,
-                                electProject.SolarRegisterDate, DateTime.Now, Helper.MiladiToShamsi(DateTime.Now), null, null, null);
+                                electProject.SolarRegisterDate, DateTime.UtcNow, Helper.MiladiToShamsi(DateTime.UtcNow), null, null, null);
                             electProjectProcessRepository.Add(electProjectProcess);
                             electProject.UpdateProjectLevel(ProjectLevelEnum.ErtStage);
 
 
                             // ارسال اسمس به کارشناس
                             await smsService.SendSms4Params(engineer.CellPhone, 9311, electProject.LandlordName,electProject.LandlordPhoneNumber,
-                                electProject.FileNumber + "-مرحله ارت-", Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                electProject.FileNumber + "-مرحله ارت-", Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
                             // ارسال اسمس به مالک 
                             await smsService.SendSms5Params(electProject.LandlordPhoneNumber, 9312, electProject.FileNumber.ToString(),
                                 "مجری ارت", engineer.FullName, engineer.CellPhone,
-                                Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+                                Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
                     }
 
 

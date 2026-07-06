@@ -95,8 +95,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublicR
                                 electProject.Client.Id.ToString(),
                                 GatewayTypeEnum.IranKish,
                                 TransactionTypeEnum.Client,
-                                TransactionStatusEnum.In, DateTime.Now,
-                                Helper.MiladiToShamsiFull(DateTime.Now),
+                                TransactionStatusEnum.In, DateTime.UtcNow,
+                                Helper.MiladiToShamsiFull(DateTime.UtcNow),
                                 bankTransaction.Id + "-" + childProject.FileNumber,
                                 verifyResult.description + "-" + "کارشناسی" + "-" + "کدرهگیری:" +
                                 request.SystemTraceAuditNumber + "-" + $"پرونده اصلی:{electProject.FileNumber}"
@@ -121,8 +121,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublicR
                                 GatewayTypeEnum.IranKish,
                                 TransactionTypeEnum.Client,
                                 TransactionStatusEnum.In,
-                                DateTime.Now,
-                                Helper.MiladiToShamsiFull(DateTime.Now),
+                                DateTime.UtcNow,
+                                Helper.MiladiToShamsiFull(DateTime.UtcNow),
                                 bankTransaction.Id + "-" + childProject.FileNumber,
                                 verifyResult.description + "-" + "ارت" + "-" + "کدرهگیری:" +
                                 request.SystemTraceAuditNumber + "-" + $"پرونده اصلی:{electProject.FileNumber}"
@@ -144,8 +144,8 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublicR
                         bankTransaction.Client,
                         bankTransaction.UserId,
                         GatewayTypeEnum.IranKish,
-                        TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.Now.Date,
-                        Helper.MiladiToShamsiFull(DateTime.Now.Date), bankTransaction.Id.ToString(),
+                        TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.UtcNow.Date,
+                        Helper.MiladiToShamsiFull(DateTime.UtcNow.Date), bankTransaction.Id.ToString(),
                         verifyResult.description + "-" + "کدرهگیری:" + request.SystemTraceAuditNumber,
                         bankTransaction.ProjectId);
 
@@ -161,7 +161,7 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublicR
 
                 if (electProject != null)
                     await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 10443,
-                        electProject.FileNumber.ToString(), Helper.MiladiToShamsiForSms(DateTime.Now.Date),
+                        electProject.FileNumber.ToString(), Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date),
                         Convert.ToInt64(verifyResult.result.amount).ToString("N0"), request.SystemTraceAuditNumber);
 
                 return callBackUrl + "?result=ok-" + bankTransaction.SystemTraceAuditNumber;
@@ -169,7 +169,7 @@ namespace Coreapi.Application.Features.Transactions.Commands.PaymentMelliPublicR
             catch (Exception e)
             {
                 await smsService.SendSms4Params("09120833933", 10443,
-                    "مشکل در انجام تراکنش", Helper.MiladiToShamsiForSms(DateTime.Now.Date),
+                    "مشکل در انجام تراکنش", Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date),
                   e.Message, request.SystemTraceAuditNumber);
                 return callBackUrl + "?result=error-transaction-verify";
             }

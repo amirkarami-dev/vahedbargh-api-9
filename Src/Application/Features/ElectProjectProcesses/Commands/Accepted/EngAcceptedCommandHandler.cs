@@ -119,7 +119,7 @@ public class EngAcceptedCommandHandler(
         }
 
         await smsService.SendSms3Params(projectProcess.ElectProject.LandlordPhoneNumber, 9808, projectProcess.ElectProject.FileNumber.ToString(),
-            engineer?.FullName, Helper.MiladiToShamsiForSms(DateTime.Now.Date));
+            engineer?.FullName, Helper.MiladiToShamsiForSms(DateTime.UtcNow.Date));
 
 
         return "ok";

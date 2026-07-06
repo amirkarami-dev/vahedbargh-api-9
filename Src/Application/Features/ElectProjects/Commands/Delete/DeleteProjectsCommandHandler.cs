@@ -68,8 +68,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Delete
                 findInvoiceCreateProject.Cancel();
 
                 var transaction = new Transaction(findInvoiceCreateProject.Amount, client, client.Id.ToString(), GatewayTypeEnum.BackPay,
-                    TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.Now,
-                    Helper.MiladiToShamsiFull(DateTime.Now), electProject.FileNumber.ToString(), "برگشت از ایجاد پرونده" + ":" + electProject.FileNumber,electProject.Id.ToString());
+                    TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.UtcNow,
+                    Helper.MiladiToShamsiFull(DateTime.UtcNow), electProject.FileNumber.ToString(), "برگشت از ایجاد پرونده" + ":" + electProject.FileNumber,electProject.Id.ToString());
 
                 transactionRepository.Add(transaction);
             }
@@ -79,8 +79,8 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Delete
                 findInvoiceNezamStage.Cancel();
 
                 var transaction = new Transaction(findInvoiceNezamStage.Amount, client, client.Id.ToString(), GatewayTypeEnum.BackPay,
-                    TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.Now,
-                    Helper.MiladiToShamsiFull(DateTime.Now), electProject.FileNumber.ToString(), "برگشت از 7 درصد نظام-ارت" + ":" + electProject.FileNumber, electProject.Id.ToString());
+                    TransactionTypeEnum.Client, TransactionStatusEnum.In, DateTime.UtcNow,
+                    Helper.MiladiToShamsiFull(DateTime.UtcNow), electProject.FileNumber.ToString(), "برگشت از 7 درصد نظام-ارت" + ":" + electProject.FileNumber, electProject.Id.ToString());
 
                 transactionRepository.Add(transaction);
             }

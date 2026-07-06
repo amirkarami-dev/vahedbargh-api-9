@@ -1,16 +1,15 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
-using Amazon.S3.Model;
 using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace Coreapi.Application.Common.Interfaces;
 
-public interface IS3Service
+public interface IS3ServicePublic
 {
     Task<Stream> GetFullPath(string path);
-    Task<string> UploadFileAttach(MemoryStream memoryStream, string key);
+    string GetLocalPath(string path);
     Task<string> UploadFileAttach(IFormFile file, string fileName, string folder, string folder2 = "");
+    Task<string> UploadFileAttach(MemoryStream memoryStream, string key);
     Task<byte[]> GetFile(string path);
     Task<byte[]> GetFileAttach(string path);
     Task DeleteFile(string path);

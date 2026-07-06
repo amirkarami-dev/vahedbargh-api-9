@@ -252,7 +252,7 @@ namespace Coreapi.Infrastructure
                     }
                     if (file.Length > 0)
                     {
-                        DateTime dt = DateTime.Now;
+                        DateTime dt = DateTime.UtcNow;
                         string name = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString();
                         string fileName = name + "Avatars" + "." + ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Split('.').ToList().Last().Trim('"');
                         string fullPath = Path.Combine(newPath, fileName);
@@ -291,7 +291,7 @@ namespace Coreapi.Infrastructure
                     }
                     if (file.Length > 0)
                     {
-                        DateTime dt = DateTime.Now;
+                        DateTime dt = DateTime.UtcNow;
                         string name = dt.Year.ToString() + dt.Month.ToString() + dt.Day.ToString() + dt.Hour.ToString() + dt.Minute.ToString() + dt.Second.ToString();
                         string fileName = name + "Avatars" + "." + ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Split('.').ToList().Last().Trim('"');
                         string fullPath = Path.Combine(newPath, fileName);

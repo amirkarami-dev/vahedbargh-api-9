@@ -136,7 +136,13 @@ namespace Coreapi.Infrastructure
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFileService, FileService>();
-            services.AddScoped<IS3Service, S3Service>();
+
+            var systemFileTypeUsing = configuration["SystemFileTypeUsing"];
+            if (systemFileTypeUsing == "s3Arvan")
+                services.AddScoped<IS3ServicePublic, S3ServiceArvan>();
+            else if (systemFileTypeUsing == "s3Liara")
+                services.AddScoped<IS3ServicePublic, S3Service>();
+
             services.AddScoped<IPdfService, PdfService>();
             services.AddScoped<IElectCoService, ElectCoService>();
             services.AddScoped<IEmailService, EmailSender>();

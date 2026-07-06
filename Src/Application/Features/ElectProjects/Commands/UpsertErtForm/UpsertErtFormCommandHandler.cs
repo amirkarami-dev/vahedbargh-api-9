@@ -19,7 +19,7 @@ public class UpsertErtFormCommandHandler(
     IElectProjectProcessRepository processRepository,
     IElectProjectRepository projectRepository,
     IReportService reportService,
-    IS3Service s3Service,
+    IS3ServicePublic s3Service,
     IElectProjectFileRepository electProjectFileRepository)
     : IRequestHandler<UpsertErtFormCommand, string>
 {

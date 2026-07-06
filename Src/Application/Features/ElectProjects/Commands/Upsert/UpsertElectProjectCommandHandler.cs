@@ -113,8 +113,8 @@ public class UpsertElectProjectCommandHandler(
                 request.IdCity,request.IdProvince, 
                 request.Lat, request.Lng, request.ProjectCreatedTypeEnum,
                 request.ProjectTypeRequestEnum, buildingTariff,request.IsEarthSystem? ertTariff:null,
-                ProjectLevelEnum.NullStage, DateTime.Now.Date,
-                Helper.MiladiToShamsi(DateTime.Now.Date),
+                ProjectLevelEnum.NullStage, DateTime.UtcNow.Date,
+                Helper.MiladiToShamsi(DateTime.UtcNow.Date),
                 request.IsEarthSystem,request.IsErtTest,
                 request.IsBuildingInspection,request.IsTestAndDelivery, 
                 request.PanelNeed, request.FoundationElectrodeArea,
@@ -173,8 +173,8 @@ public class UpsertElectProjectCommandHandler(
                         // ایجاد تراکنش برداشت مرحله ایجاد پرونده برای بازرسی
                         // اگر پرونده بزرگ باشد مقدا مبلغ تراکنش صفر میشود چون در تراکنش فرزندانش کسر میشود
                         var transaction = new Transaction(invoiceInspection.Amount, client, client.Id.ToString(),
-                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                            Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                             $"برداشت ایجاد پرونده بازرسی:{electProject.FileNumber}", electProject.Id.ToString());
                         invoiceInspection.Done(transaction);
                         payWithSms += invoiceInspection.Amount;
@@ -204,8 +204,8 @@ public class UpsertElectProjectCommandHandler(
 
                         // ایجاد تراکنش برداشت مرحله ایجاد پرونده ارت 
                         var transaction = new Transaction(amountPayErtSystem, client, client.Id.ToString(),
-                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                            Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                            GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                            Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                             $"برداشت 9 درصد نظام:ارت:{electProject.FileNumber}", electProject.Id.ToString());
                         invoiceErtSystem.Done(transaction);
                         payWithSms += amountPayErtSystem;
@@ -250,8 +250,8 @@ public class UpsertElectProjectCommandHandler(
 
                 // ایجاد تراکنش برداشت مرحله ایجاد پرونده در هنگام تخصیص
                 var transaction = new Transaction(amountPayTestAndDelivery, client, client.Id.ToString(),
-                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-                    Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+                    GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+                    Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
                     $"برداشت ایجاد پرونده تست و تحویل:{electProject.FileNumber}", electProject.Id.ToString());
                 invoiceTestAndDelivery.Done(transaction);
                 //payWithSms += amountPayTestAndDelivery;
@@ -271,8 +271,8 @@ public class UpsertElectProjectCommandHandler(
 				invoiceRepository.Add(invoiceServices);
 				// ایجاد تراکنش برداشت خدمات پرونده 
 				var transactionServices = new Transaction(sumAmountService, client, client.Id.ToString(),
-					GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.Now,
-					Helper.MiladiToShamsi(DateTime.Now.Date), electProject.FileNumber.ToString(),
+					GatewayTypeEnum.System, TransactionTypeEnum.Client, TransactionStatusEnum.Out, DateTime.UtcNow,
+					Helper.MiladiToShamsi(DateTime.UtcNow.Date), electProject.FileNumber.ToString(),
 					$"برداشت هزینه خدمات:{electProject.FileNumber}", electProject.Id.ToString());
 				invoiceServices.Done(transactionServices);
 
@@ -319,7 +319,7 @@ public class UpsertElectProjectCommandHandler(
         if (payWithSms <= 0) return electProject.Id.ToString();
 
         var param = $"e={encodeGuid}&a={payWithSms}";
-        await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 9593, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.Now),
+        await smsService.SendSms4Params(electProject.LandlordPhoneNumber, 9593, electProject.FileNumber.ToString(), Helper.MiladiToShamsi(DateTime.UtcNow),
             payWithSms.ToString("N0") + "ریال", param);
 
 

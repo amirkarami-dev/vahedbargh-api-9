@@ -32,7 +32,7 @@ public class StopProjectCommandHandler : IRequestHandler<StopProjectCommand, int
         if (electProject.ProjectLevelEnum is ProjectLevelEnum.NullStage)
             throw new NotFoundException("پرنده در مرحله قبل از تخصیص می باشد و مجری میتواند آن را حذف کند");
 
-        electProject.StopProject(request.IsStop, request.StopDes + " - " + Helper.MiladiToShamsi(DateTime.Now));
+        electProject.StopProject(request.IsStop, request.StopDes + " - " + Helper.MiladiToShamsi(DateTime.UtcNow));
 
         await _repository.UnitOfWork.SaveChangesAsync(cancellationToken);
         return 0;

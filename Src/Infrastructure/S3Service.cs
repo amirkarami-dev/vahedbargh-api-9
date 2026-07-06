@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Coreapi.Application.Common.Interfaces;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Amazon.S3;
@@ -7,36 +8,37 @@ using Amazon.S3.Model;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using Coreapi.Application.Common.Exceptions;
 
 namespace Coreapi.Infrastructure;
 
-public class S3Service:IS3Service
+public class S3Service : IS3ServicePublic
 {
-    private readonly string _endPoint;
     private readonly string _bucketName;
-    private readonly string _accessKey;
-    private readonly string _secretKey;
     private readonly AmazonS3Client _client;
+    private readonly IWebHostEnvironment _hostingEnvironment;
 
-    public S3Service(IConfiguration configuration)
+    public S3Service(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
     {
-
-        _endPoint = configuration["ConfigS3:ENDPOINT"];
         _bucketName = configuration["ConfigS3:BUCKET_NAME"];
-        _accessKey = configuration["ConfigS3:ACCESS_KEY"];
-        _secretKey = configuration["ConfigS3:SECRET_KEY"];
-        // making s3 connections
+        _hostingEnvironment = hostingEnvironment;
+
         var config = new AmazonS3Config
         {
-            ServiceURL = _endPoint,
+            ServiceURL = configuration["ConfigS3:ENDPOINT"],
             ForcePathStyle = true,
             SignatureVersion = "4"
         };
-        var credentials = new Amazon.Runtime.BasicAWSCredentials(_accessKey, _secretKey);
+        var credentials = new Amazon.Runtime.BasicAWSCredentials(
+            configuration["ConfigS3:ACCESS_KEY"],
+            configuration["ConfigS3:SECRET_KEY"]);
         _client = new AmazonS3Client(credentials, config);
+    }
 
+    public string GetLocalPath(string path)
+    {
+        var fullPath = Path.Combine(_hostingEnvironment.ContentRootPath, path);
+        return File.Exists(fullPath) ? fullPath : null;
     }
 
     public async Task<Stream> GetFullPath(string path)

@@ -42,7 +42,7 @@ public class EngPaymentListCommandHandler(
         var engineers = await engineerRepository.GetAll();
         var listEngineer = engineers.ToList();
 
-        var engPaymentTask = new EngPaymentTask(client, Helper.MiladiToShamsi(DateTime.Now), DateTime.Now,
+        var engPaymentTask = new EngPaymentTask(client, Helper.MiladiToShamsi(DateTime.UtcNow), DateTime.UtcNow,
             getLatestPeriod,
             request.FromSolar, Helper.ShamsiToMiladi(request.FromSolar), request.ToSolar,
             Helper.ShamsiToMiladi(request.ToSolar), request.Description, null);

@@ -17,11 +17,11 @@ namespace Coreapi.Application.Features.User.Commands.AddUserFile
     {
         private readonly IClientRepository _clientRepository;
         private readonly ICurrentUser _currentUser;
-        private readonly IS3Service _s3Service;
+        private readonly IS3ServicePublic _s3Service;
 
         private readonly IUserFileRepository _userFileRepository;
 
-        public AddUserFileCommandHandler(IClientRepository clientRepository, ICurrentUser currentUser, IS3Service s3Service, IUserFileRepository userFileRepository)
+        public AddUserFileCommandHandler(IClientRepository clientRepository, ICurrentUser currentUser, IS3ServicePublic s3Service, IUserFileRepository userFileRepository)
         {
             _clientRepository = clientRepository;
             _currentUser = currentUser;

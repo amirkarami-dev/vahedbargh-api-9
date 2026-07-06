@@ -69,7 +69,7 @@ namespace Coreapi.Application.Features.Clients.Commands.SignupClient
             {
                 await emailService.SendEmailAsync(superuser.Email, "New Client Registered"
                     , string.Format("{0} \n {1}",
-                      $"Client {request.CompanyName} registered at Coreapi  at {DateTime.Now}."
+                      $"Client {request.CompanyName} registered at Coreapi  at {DateTime.UtcNow}."
                       , $"Selected package"));
             }
 

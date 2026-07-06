@@ -29,7 +29,7 @@ namespace Coreapi.Infrastructure.BackgroundServices
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
 
             // Calculate the time until the next midnight
             //var nextMidnight = new DateTime(now.Year, now.Month, now.Day + 1, 0, 0, 0);
