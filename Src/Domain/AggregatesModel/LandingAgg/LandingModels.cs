@@ -74,5 +74,6 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         public string Subject { get; set; }
         public string Message { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; } // admin inbox read/unread flag
     }
 }

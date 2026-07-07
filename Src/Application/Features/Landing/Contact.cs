@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Coreapi.Domain.AggregatesModel.LandingAgg;
@@ -52,5 +54,53 @@ namespace Coreapi.Application.Features.Landing.Contact
 
             return new ContactResultDto { Success = true, Message = "پیام شما با موفقیت ثبت شد. به‌زودی با شما تماس خواهیم گرفت." };
         }
+    }
+
+    // ---------- Admin inbox ----------
+
+    public class ContactMessageDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Mobile { get; set; }
+        public string Subject { get; set; }
+        public string Message { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
+
+        public static ContactMessageDto From(ContactMessage m) => new()
+        {
+            Id = m.Id, Name = m.Name, Email = m.Email, Mobile = m.Mobile, Subject = m.Subject,
+            Message = m.Message, CreatedAt = m.CreatedAt, IsRead = m.IsRead,
+        };
+    }
+
+    public class GetContactMessagesQuery : IRequest<IEnumerable<ContactMessageDto>> { }
+
+    public class MarkContactReadCommand : IRequest<bool>
+    {
+        public Guid Id { get; set; }
+        public bool IsRead { get; set; } = true;
+    }
+
+    public class DeleteContactMessageCommand : IRequest<bool>
+    {
+        public Guid Id { get; set; }
+    }
+
+    public class ContactAdminHandlers(ILandingRepository repo) :
+        IRequestHandler<GetContactMessagesQuery, IEnumerable<ContactMessageDto>>,
+        IRequestHandler<MarkContactReadCommand, bool>,
+        IRequestHandler<DeleteContactMessageCommand, bool>
+    {
+        public async Task<IEnumerable<ContactMessageDto>> Handle(GetContactMessagesQuery r, CancellationToken ct) =>
+            (await repo.GetContactMessages()).Select(ContactMessageDto.From);
+
+        public async Task<bool> Handle(MarkContactReadCommand r, CancellationToken ct) =>
+            await repo.MarkContactMessageRead(r.Id, r.IsRead);
+
+        public async Task<bool> Handle(DeleteContactMessageCommand r, CancellationToken ct) =>
+            await repo.DeleteContactMessage(r.Id);
     }
 }
