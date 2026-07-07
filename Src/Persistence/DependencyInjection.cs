@@ -34,6 +34,7 @@ namespace Coreapi.Persistence
 
 
             services.AddScoped<IRoutRepository, RouteRepository>();
+            services.AddScoped<Coreapi.Domain.AggregatesModel.LandingAgg.ILandingRepository, LandingRepository>();
             services.AddScoped<IElectProjectRepository, ElectProjectRepository>();
             services.AddScoped<IBuildingTariffRepository, BuildingTariffRepository>();
             services.AddScoped<IInvoiceRepository, InvoiceRepository>();

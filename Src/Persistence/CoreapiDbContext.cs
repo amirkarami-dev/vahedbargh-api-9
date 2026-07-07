@@ -6,6 +6,7 @@ using Coreapi.Domain.AggregatesModel.ErtTariffAgg;
 using Coreapi.Domain.AggregatesModel.ExecutorAgg;
 using Coreapi.Domain.AggregatesModel.FinanceAgg;
 using Coreapi.Domain.AggregatesModel.GeoAgg;
+using Coreapi.Domain.AggregatesModel.LandingAgg;
 using Coreapi.Domain.AggregatesModel.PanelMakerAgg;
 using Coreapi.Domain.AggregatesModel.QuarterIncrease;
 using Coreapi.Domain.AggregatesModel.QuarterTariffAgg;
@@ -71,6 +72,14 @@ namespace Coreapi.Persistence
         public DbSet<Province> Provinces { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Section> Sections { get; set; }
+
+        // Public landing/CMS content (global, anonymous — replaces Supabase)
+        public DbSet<Announcement> Announcements { get; set; }
+        public DbSet<Meeting> Meetings { get; set; }
+        public DbSet<MeetingResolution> MeetingResolutions { get; set; }
+        public DbSet<Document> Documents { get; set; }
+        public DbSet<StatItem> StatItems { get; set; }
+        public DbSet<ContactMessage> ContactMessages { get; set; }
 
         //public int OnGetUserBalance(string userId) => throw new NotSupportedException();
 
