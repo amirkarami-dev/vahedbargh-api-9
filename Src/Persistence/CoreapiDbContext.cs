@@ -80,6 +80,8 @@ namespace Coreapi.Persistence
         public DbSet<Document> Documents { get; set; }
         public DbSet<StatItem> StatItems { get; set; }
         public DbSet<ContactMessage> ContactMessages { get; set; }
+        public DbSet<ProcessFlow> ProcessFlows { get; set; }
+        public DbSet<ProcessStep> ProcessSteps { get; set; }
 
         //public int OnGetUserBalance(string userId) => throw new NotSupportedException();
 

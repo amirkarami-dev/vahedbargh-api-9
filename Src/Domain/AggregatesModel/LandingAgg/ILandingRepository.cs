@@ -41,6 +41,9 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         Task<StatItem> UpdateStat(StatItem entity);
         Task<bool> DeleteStat(Guid id);
 
+        // --- Process flows (guided procedures) ---
+        Task<IEnumerable<ProcessFlow>> GetProcessFlows();
+
         // --- Contact messages (admin inbox) ---
         Task<ContactMessage> AddContactMessage(ContactMessage message);
         Task<IEnumerable<ContactMessage>> GetContactMessages();

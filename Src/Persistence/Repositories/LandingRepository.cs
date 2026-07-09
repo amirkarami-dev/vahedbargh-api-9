@@ -230,6 +230,12 @@ namespace Coreapi.Persistence.Repositories
             return true;
         }
 
+        public async Task<IEnumerable<ProcessFlow>> GetProcessFlows() =>
+            await context.ProcessFlows.AsNoTracking()
+                .Include(f => f.Steps)
+                .OrderBy(f => f.SortOrder)
+                .ToListAsync();
+
         public async Task<ContactMessage> AddContactMessage(ContactMessage message)
         {
             context.ContactMessages.Add(message);

@@ -66,6 +66,36 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         public int SortOrder { get; set; }
     }
 
+    // A guided process (بازرسی برق / سیستم ارت / تست و تحویل) shown on /processes.
+    public class ProcessFlow : BaseModel<Guid>
+    {
+        public string Key { get; set; } // stable slug used by the UI (e.g. "inspection")
+        public string Title { get; set; }
+        public string Subtitle { get; set; }
+        public string Description { get; set; }
+        public string Color { get; set; } // tailwind gradient classes
+        public string GlowColor { get; set; } // rgba() used for glow/borders
+        public string Icon { get; set; } // emoji
+        public int SortOrder { get; set; }
+        public List<ProcessStep> Steps { get; set; } = new();
+    }
+
+    public class ProcessStep : BaseModel<Guid>
+    {
+        public Guid ProcessFlowId { get; set; }
+        public int Number { get; set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public string Details { get; set; } // newline-separated list
+        public string RequiredDocs { get; set; } // newline-separated list
+        public string Tools { get; set; } // newline-separated list
+        public string Note { get; set; }
+        public bool IsDecision { get; set; }
+        public string DecisionYes { get; set; }
+        public string DecisionNo { get; set; }
+        public int SortOrder { get; set; }
+    }
+
     public class ContactMessage : BaseModel<Guid>
     {
         public string Name { get; set; }
