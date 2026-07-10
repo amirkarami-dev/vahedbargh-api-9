@@ -236,6 +236,41 @@ namespace Coreapi.Persistence.Repositories
                 .OrderBy(f => f.SortOrder)
                 .ToListAsync();
 
+        public async Task<ProcessFlow> AddProcessFlow(ProcessFlow entity)
+        {
+            context.ProcessFlows.Add(entity);
+            await context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<ProcessFlow> UpdateProcessFlow(ProcessFlow entity)
+        {
+            var db = await context.ProcessFlows.Include(f => f.Steps).FirstOrDefaultAsync(f => f.Id == entity.Id);
+            if (db is null) return null;
+            db.Key = entity.Key;
+            db.Title = entity.Title;
+            db.Subtitle = entity.Subtitle;
+            db.Description = entity.Description;
+            db.Color = entity.Color;
+            db.GlowColor = entity.GlowColor;
+            db.Icon = entity.Icon;
+            db.SortOrder = entity.SortOrder;
+            // Replace steps wholesale (simplest correct semantics for the child set).
+            context.ProcessSteps.RemoveRange(db.Steps);
+            db.Steps = entity.Steps;
+            await context.SaveChangesAsync();
+            return db;
+        }
+
+        public async Task<bool> DeleteProcessFlow(Guid id)
+        {
+            var db = await context.ProcessFlows.FirstOrDefaultAsync(f => f.Id == id);
+            if (db is null) return false;
+            context.ProcessFlows.Remove(db); // steps cascade-delete
+            await context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<ContactMessage> AddContactMessage(ContactMessage message)
         {
             context.ContactMessages.Add(message);

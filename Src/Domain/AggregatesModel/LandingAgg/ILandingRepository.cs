@@ -43,6 +43,9 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
 
         // --- Process flows (guided procedures) ---
         Task<IEnumerable<ProcessFlow>> GetProcessFlows();
+        Task<ProcessFlow> AddProcessFlow(ProcessFlow entity);
+        Task<ProcessFlow> UpdateProcessFlow(ProcessFlow entity);
+        Task<bool> DeleteProcessFlow(Guid id);
 
         // --- Contact messages (admin inbox) ---
         Task<ContactMessage> AddContactMessage(ContactMessage message);
