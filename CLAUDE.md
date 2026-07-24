@@ -2,6 +2,33 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Shared project documentation (read this first)
+
+This API is **one half of a two-repo project**. The frontend is a sibling repo at
+`../vahedbargh-ui-vite`, and the shared, up-to-date documentation for BOTH repos lives there:
+
+- **`../vahedbargh-ui-vite/docs/ai/00-START-HERE.md`** — start here (rules, read order, done-criteria)
+- `../vahedbargh-ui-vite/docs/ai/02-ARCHITECTURE.md` — backend layers + the landing aggregate
+- `../vahedbargh-ui-vite/docs/ai/04-RECIPES.md` — end-to-end feature recipe **and the EF migration procedure**
+- `../vahedbargh-ui-vite/docs/ai/06-GOTCHAS.md` — traps (see below)
+
+### Landing/CMS work happens here too
+
+The public website + Administrator CMS are backed by the `LandingAgg` aggregate in this repo
+(`Src/Domain/AggregatesModel/LandingAgg`). Landing branch: `feat/landing-endpoints`.
+
+### Two traps that will bite you
+
+1. **Every generated migration includes a spurious `AlterColumn` on `Clients.ApiKey`** (its default is
+   randomly regenerated each build). Strip it from `Up()`, `Down()` **and** the generated `.sql`.
+   Generate migrations from `Src/Persistence` with `--project . --startup-project .` so dotnet-ef
+   does not rebuild and file-lock a running `Coreapi.Api.dll`.
+2. **There is no global authorization fallback** — an action with no attribute is anonymous, and a
+   class-level `[AllowAnonymous]` silently defeats action-level `[Authorize]`.
+
+**After finishing a task, add a record** at
+`../vahedbargh-ui-vite/docs/ai/tasks/YYYY-MM-DD-<title>.md`.
+
 ## Project Overview
 
 **Vahedbargh** is a multi-tenant SaaS platform for managing electrical engineering projects (project lifecycle, engineer assignments, tariffs, client management, and payments). It targets the Iranian electricity sector and integrates with local payment gateways and cloud providers.
