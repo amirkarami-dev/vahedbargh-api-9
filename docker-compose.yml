@@ -37,13 +37,13 @@ services:
       - S3Environment=Production
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.elec-unit-api.rule=Host(`api.kurdnezambargh2.ir`)"
+      - "traefik.http.routers.elec-unit-api.rule=Host(`api.kurdnezambargh.ir`)"
       - "traefik.http.routers.elec-unit-api.entrypoints=websecure"
       - "traefik.http.routers.elec-unit-api.tls.certresolver=myresolver"
       - "traefik.http.services.elec-unit-api.loadbalancer.server.port=80"
       - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST,DELETE,PATCH"
       - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolallowheaders=*"
-      - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolalloworiginlist=https://api.kurdnezambargh2.ir,http://api.kurdnezambargh2.ir,https://kurdnezambargh2.ir,http://kurdnezambargh2.ir"
+      - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolalloworiginlist=https://api.kurdnezambargh.ir,http://api.kurdnezambargh.ir,https://kurdnezambargh2.ir,http://kurdnezambargh2.ir"
       - "traefik.http.middlewares.elec-unit-api-cors.headers.accesscontrolmaxage=100"
       - "traefik.http.middlewares.elec-unit-api-cors.headers.addvaryheader=true"
       - "traefik.http.routers.elec-unit-api.middlewares=elec-unit-api-cors"
