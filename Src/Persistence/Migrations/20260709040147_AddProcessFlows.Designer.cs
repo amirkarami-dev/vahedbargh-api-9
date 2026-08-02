@@ -4,6 +4,7 @@ using Coreapi.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,11 @@ using NetTopologySuite.Geometries;
 namespace Coreapi.Persistence.Migrations
 {
     [DbContext(typeof(CoreapiDbContext))]
-    partial class CoreapiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260709040147_AddProcessFlows")]
+    partial class AddProcessFlows
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,7 +103,7 @@ namespace Coreapi.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)")
-                        .HasDefaultValue("86bc056bc8bef6ea75340ee607d63e4696cec0fdd87392258c827b4244f8074f");
+                        .HasDefaultValue("f5af312e5487fbc8d2f44ca1e90633bdc3493372d31e2a2ee174801f762c107e");
 
                     b.Property<decimal>("Balance")
                         .HasColumnType("money");
@@ -2350,24 +2353,13 @@ namespace Coreapi.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f1000000-0000-0000-0000-000000000000"),
-                            Description = "برای بازرسی برق یا سیستم ارت، ابتدا مالک به شرکت توزیع مراجعه می‌کند. شرکت توزیع برای درخواست مالک یک پرونده در کارتابل دفتر اجرایی ایجاد می‌کند و ادامهٔ فرآیند در دفتر اجرایی انجام می‌شود.",
-                            Details = "مراجعهٔ مالک به شرکت توزیع برق\nثبت درخواست و تشکیل پرونده در کارتابل دفتر اجرایی\nارجاع پرونده به دفتر اجرایی برای ادامهٔ فرآیند",
-                            IsDecision = false,
-                            Number = 1,
-                            ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
-                            SortOrder = 1,
-                            Title = "مراجعهٔ مالک و تشکیل پرونده"
-                        },
-                        new
-                        {
                             Id = new Guid("f1000000-0000-0000-0000-000000000001"),
                             Description = "ناظر تأسیسات الکتریکی درخواست بازرسی را تکمیل و به دفتر اجرایی ارائه می‌دهد.",
                             IsDecision = false,
-                            Number = 2,
+                            Number = 1,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
                             RequiredDocs = "فرم درخواست بازرسی\nکپی پروانه ساخت\nنقشه‌های تأسیسات الکتریکی",
-                            SortOrder = 2,
+                            SortOrder = 1,
                             Title = "دریافت درخواست بازرسی"
                         },
                         new
@@ -2376,10 +2368,10 @@ namespace Coreapi.Persistence.Migrations
                             Description = "مدارک ناظر و مجری بررسی می‌شود. گواهینامه فنی بازرسی و پروانه اشتغال به کار معتبر باشد.",
                             Details = "اعتبار گواهینامه فنی بازرسی تأیید شود\nصلاحیت بازرس در سامانه نظام مهندسی احراز شود",
                             IsDecision = false,
-                            Number = 3,
+                            Number = 2,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
                             RequiredDocs = "گواهینامه فنی بازرس\nپروانه اشتغال ناظر\nمستندات مجری برق",
-                            SortOrder = 3,
+                            SortOrder = 2,
                             Title = "بررسی مدارک و صلاحیت"
                         },
                         new
@@ -2388,9 +2380,9 @@ namespace Coreapi.Persistence.Migrations
                             Description = "تاریخ و زمان بازدید میدانی با هماهنگی ناظر، مجری و مالک تعیین می‌شود.",
                             Details = "ارسال اطلاعیه زمان بازدید به ناظر هماهنگ‌کننده\nاطمینان از حضور مجری اجرا در محل",
                             IsDecision = false,
-                            Number = 4,
+                            Number = 3,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
-                            SortOrder = 4,
+                            SortOrder = 3,
                             Title = "هماهنگی و زمان‌بندی بازدید"
                         },
                         new
@@ -2399,9 +2391,9 @@ namespace Coreapi.Persistence.Migrations
                             Description = "بازرس به محل ساختمان مراجعه و وضعیت اجرایی تأسیسات را از نظر انطباق با مقررات ملی ارزیابی می‌کند.",
                             Details = "بررسی کابل‌کشی و لوله‌گذاری\nبررسی تابلوهای توزیع و کنتور\nبررسی سیستم زمین و همبندی\nبررسی تجهیزات حفاظتی",
                             IsDecision = false,
-                            Number = 5,
+                            Number = 4,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
-                            SortOrder = 5,
+                            SortOrder = 4,
                             Title = "بازدید میدانی از محل",
                             Tools = "متر و ابزار اندازه‌گیری\nچراغ‌قوه بازرسی\nدوربین ثبت مستندات"
                         },
@@ -2411,10 +2403,10 @@ namespace Coreapi.Persistence.Migrations
                             Description = "چک‌لیست استاندارد بازرسی ویرایش ۱۴۰۴ مطابق IEC 60364-6، BS 7671 و استاندارد ملی ایران ۶-۱۹۳۷ تکمیل می‌شود.",
                             Details = "آرایش سیستم زمین: TN-C-S / TT / IT\nمشخصات انشعاب (جریان نامی، ماکزیمم دیماند)\nمشخصات کلید قطع‌کننده اصلی\nپیوستگی هادی‌های حفاظتی و همبندی",
                             IsDecision = false,
-                            Number = 6,
+                            Number = 5,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
                             RequiredDocs = "چک‌لیست بازرسی ویرایش ۱۴۰۴\nفرم مشخصات منبع تغذیه\nجداول آرایش سیستم زمین",
-                            SortOrder = 6,
+                            SortOrder = 5,
                             Title = "تکمیل چک‌لیست بازرسی"
                         },
                         new
@@ -2423,10 +2415,10 @@ namespace Coreapi.Persistence.Migrations
                             Description = "کروکی محل به صورت دستی یا با استفاده از قالب DWG تهیه و ضمیمه گزارش می‌شود.",
                             Details = "موقعیت تابلوها، کنتورها و کلیدها مشخص شود\nمسیر کابل‌های اصلی ترسیم شود",
                             IsDecision = false,
-                            Number = 7,
+                            Number = 6,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
                             RequiredDocs = "قالب کروکی بازرسی (.dwg)\nنمونه کروکی مرجع",
-                            SortOrder = 7,
+                            SortOrder = 6,
                             Title = "رسم کروکی بازرسی"
                         },
                         new
@@ -2435,9 +2427,9 @@ namespace Coreapi.Persistence.Migrations
                             Description = "گزارش کامل بازرسی شامل نتایج بازدید، موارد عدم انطباق و پیشنهادات تنظیم می‌شود.",
                             Details = "موارد متضاد با مبحث ۱۳ مقررات ملی مستند شود\nپیشنهاد دوره بازرسی بعدی (حداکثر ... سال)\nشماره گواهینامه فنی بازرس درج شود",
                             IsDecision = false,
-                            Number = 8,
+                            Number = 7,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
-                            SortOrder = 8,
+                            SortOrder = 7,
                             Title = "تنظیم و صدور گزارش بازرسی"
                         },
                         new
@@ -2446,10 +2438,10 @@ namespace Coreapi.Persistence.Migrations
                             Description = "پس از رفع نقص‌ها، ناظر تأسیسات فرم تأیید را مهر و امضاء کرده و مدارک به شرکت توزیع برق ارسال می‌شود.",
                             IsDecision = false,
                             Note = "صدور گواهی پایان کار منوط به تأیید این مرحله است.",
-                            Number = 9,
+                            Number = 8,
                             ProcessFlowId = new Guid("f0000000-0000-0000-0000-000000000001"),
                             RequiredDocs = "فرم تأیید ناظر (مهر و امضاء)\nگزارش بازرسی نهایی\nکروکی تأیید شده",
-                            SortOrder = 9,
+                            SortOrder = 8,
                             Title = "تأیید ناظر و ارسال به برق"
                         },
                         new

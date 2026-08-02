@@ -194,7 +194,7 @@ namespace Coreapi.Infrastructure
 
             var message = SmsHelper.BuildMessage(templateId, parameters.ToArray());
             await SmsSave(data.Mobile.ToString(), message == "0" ? templateId.ToString() : message);
-			await SendBaleMessageAsync(data.Mobile.ToString(), message == "0" ? templateId.ToString() : message);
+			//await SendBaleMessageAsync(data.Mobile.ToString(), message == "0" ? templateId.ToString() : message);
 
 			try
             {

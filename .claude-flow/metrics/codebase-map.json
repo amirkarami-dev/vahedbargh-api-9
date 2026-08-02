@@ -1,0 +1,11 @@
+{
+  "timestamp": "2026-07-24T22:13:37.266Z",
+  "projectRoot": "D:\\projects\\Projects\\vahedbargh\\alpha\\vahedbargh-api-9",
+  "structure": {
+    "hasPackageJson": false,
+    "hasTsConfig": false,
+    "hasClaudeConfig": true,
+    "hasClaudeFlow": true
+  },
+  "scannedAt": 1784931217266
+}
