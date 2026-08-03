@@ -271,6 +271,66 @@ namespace Coreapi.Persistence.Repositories
             return true;
         }
 
+        // The /about page is a single seeded row. Children come back already ordered so the
+        // page renders correctly without the caller having to re-sort.
+        public async Task<AboutContent> GetAboutContent() =>
+            await context.AboutContents.AsNoTracking()
+                .Include(a => a.Missions.OrderBy(m => m.SortOrder))
+                .Include(a => a.OrgNodes.OrderBy(n => n.Level).ThenBy(n => n.SortOrder))
+                .Include(a => a.BoardMembers.OrderBy(m => m.SortOrder))
+                .Include(a => a.Duties.OrderBy(d => d.SortOrder))
+                .FirstOrDefaultAsync();
+
+        public async Task<AboutContent> UpdateAboutContent(AboutContent entity)
+        {
+            var db = await context.AboutContents
+                .Include(a => a.Missions)
+                .Include(a => a.OrgNodes)
+                .Include(a => a.BoardMembers)
+                .Include(a => a.Duties)
+                .FirstOrDefaultAsync();
+
+            // The seed guarantees a row, but a database restored before this migration would
+            // not have one — create it rather than 404 the admin out of the CMS.
+            if (db is null)
+            {
+                entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
+                Reparent(entity, entity.Id);
+                context.AboutContents.Add(entity);
+                await context.SaveChangesAsync();
+                return entity;
+            }
+
+            db.PageTitle = entity.PageTitle;
+            db.Intro = entity.Intro;
+            db.MissionsTitle = entity.MissionsTitle;
+            db.OrgChartTitle = entity.OrgChartTitle;
+            db.BoardTitle = entity.BoardTitle;
+            db.DutiesTitle = entity.DutiesTitle;
+            // Replace each child set wholesale — same semantics as ProcessFlow.Steps.
+            context.AboutMissions.RemoveRange(db.Missions);
+            context.AboutOrgNodes.RemoveRange(db.OrgNodes);
+            context.AboutBoardMembers.RemoveRange(db.BoardMembers);
+            context.AboutDuties.RemoveRange(db.Duties);
+            Reparent(entity, db.Id);
+            db.Missions = entity.Missions;
+            db.OrgNodes = entity.OrgNodes;
+            db.BoardMembers = entity.BoardMembers;
+            db.Duties = entity.Duties;
+            await context.SaveChangesAsync();
+            return db;
+        }
+
+        // Only the repository knows the singleton's row Id, so it — not the command handler —
+        // stamps the foreign key on the incoming children.
+        private static void Reparent(AboutContent entity, Guid id)
+        {
+            foreach (var m in entity.Missions) m.AboutContentId = id;
+            foreach (var n in entity.OrgNodes) n.AboutContentId = id;
+            foreach (var m in entity.BoardMembers) m.AboutContentId = id;
+            foreach (var d in entity.Duties) d.AboutContentId = id;
+        }
+
         public async Task<ContactMessage> AddContactMessage(ContactMessage message)
         {
             context.ContactMessages.Add(message);

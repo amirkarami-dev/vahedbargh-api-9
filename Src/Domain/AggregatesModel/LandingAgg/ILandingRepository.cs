@@ -47,6 +47,10 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         Task<ProcessFlow> UpdateProcessFlow(ProcessFlow entity);
         Task<bool> DeleteProcessFlow(Guid id);
 
+        // --- About page (singleton + its four child collections) ---
+        Task<AboutContent> GetAboutContent();
+        Task<AboutContent> UpdateAboutContent(AboutContent entity);
+
         // --- Contact messages (admin inbox) ---
         Task<ContactMessage> AddContactMessage(ContactMessage message);
         Task<IEnumerable<ContactMessage>> GetContactMessages();

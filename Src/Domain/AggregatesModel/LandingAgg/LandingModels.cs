@@ -96,6 +96,58 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         public int SortOrder { get; set; }
     }
 
+    // The /about page. A singleton row (stable seed Id) that owns every section of the page:
+    // the intro, plus four ordered child collections. Section headings live here so the whole
+    // page is editable, not just its lists.
+    public class AboutContent : BaseModel<Guid>
+    {
+        public string PageTitle { get; set; }
+        public string Intro { get; set; }
+        public string MissionsTitle { get; set; }
+        public string OrgChartTitle { get; set; }
+        public string BoardTitle { get; set; }
+        public string DutiesTitle { get; set; }
+        public List<AboutMission> Missions { get; set; } = new();
+        public List<AboutOrgNode> OrgNodes { get; set; } = new();
+        public List<AboutBoardMember> BoardMembers { get; set; } = new();
+        public List<AboutDuty> Duties { get; set; } = new();
+    }
+
+    public class AboutMission : BaseModel<Guid>
+    {
+        public Guid AboutContentId { get; set; }
+        public string IconName { get; set; } // key into the lucide map in AboutPage.tsx
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    // One box in the org chart. Level is the tier it sits on (0 = top), and every node
+    // sharing a level renders side by side, connected down to the next level.
+    public class AboutOrgNode : BaseModel<Guid>
+    {
+        public Guid AboutContentId { get; set; }
+        public int Level { get; set; }
+        public string Title { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    public class AboutBoardMember : BaseModel<Guid>
+    {
+        public Guid AboutContentId { get; set; }
+        public string Name { get; set; }
+        public string Role { get; set; }
+        public string Description { get; set; }
+        public int SortOrder { get; set; }
+    }
+
+    public class AboutDuty : BaseModel<Guid>
+    {
+        public Guid AboutContentId { get; set; }
+        public string Text { get; set; }
+        public int SortOrder { get; set; }
+    }
+
     public class ContactMessage : BaseModel<Guid>
     {
         public string Name { get; set; }

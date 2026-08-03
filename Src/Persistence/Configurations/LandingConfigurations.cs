@@ -15,6 +15,12 @@ namespace Coreapi.Persistence.Configurations
         public static Guid Stat(int n) => new($"e0000000-0000-0000-0000-0000000000{n:00}");
         public static Guid Flow(int n) => new($"f0000000-0000-0000-0000-0000000000{n:00}");
         public static Guid Step(int f, int n) => new($"f{f}000000-0000-0000-0000-0000000000{n:00}");
+        // /about — a singleton row plus its four child collections.
+        public static Guid About => new("1a000000-0000-0000-0000-000000000001");
+        public static Guid Mission(int n) => new($"1b000000-0000-0000-0000-0000000000{n:00}");
+        public static Guid OrgNode(int n) => new($"1c000000-0000-0000-0000-0000000000{n:00}");
+        public static Guid Board(int n) => new($"1d000000-0000-0000-0000-0000000000{n:00}");
+        public static Guid Duty(int n) => new($"1e000000-0000-0000-0000-0000000000{n:00}");
     }
 
     public class AnnouncementConfiguration : IEntityTypeConfiguration<Announcement>
@@ -178,6 +184,106 @@ namespace Coreapi.Persistence.Configurations
                 new ProcessStep { Id = LandingSeedIds.Step(3, 8), ProcessFlowId = LandingSeedIds.Flow(3), Number = 8, SortOrder = 8, Title = "تست سیستم ارت و همبندی", Description = "مقاومت الکترود زمین اندازه‌گیری و صحت پیوستگی هادی‌های حفاظتی بررسی می‌شود.", Details = J("مقاومت الکترود زمین: ≤ ۱۰ اهم", "پیوستگی هادی‌های PE در تمامی مدارها", "اتصال همبندی اصلی (MEB)", "اتصال همبندی لوله‌های فلزی"), Tools = J("KYORITSU 4105A", "FLUKE 1653B (Continuity Mode)") },
                 new ProcessStep { Id = LandingSeedIds.Step(3, 9), ProcessFlowId = LandingSeedIds.Flow(3), Number = 9, SortOrder = 9, Title = "تکمیل تست شیت و گزارش", Description = "تست شیت کامل با کلیه نتایج اندازه‌گیری، امضای طراح، مجری، ناظر و بازرس تکمیل می‌شود.", RequiredDocs = J("تست شیت تأسیسات برقی (مهر و امضاء طراح)", "تست شیت (مهر و امضاء مجری)", "تست شیت (مهر و امضاء ناظر)", "گزارش بازرسی تست و تحویل"), Details = J("کلیه نتایج تست‌ها ثبت شود", "موارد عدم انطباق مستند گردد", "پیشنهاد دوره بازرسی بعدی درج شود") },
                 new ProcessStep { Id = LandingSeedIds.Step(3, 10), ProcessFlowId = LandingSeedIds.Flow(3), Number = 10, SortOrder = 10, Title = "ارائه به کمیسیون و صدور گواهی", Description = "مدارک کامل به کمیسیون تأسیسات دفتر اجرایی ارائه شده و گواهی پایان کار صادر می‌شود.", RequiredDocs = J("پکیج کامل مستندات تست و تحویل", "روال اجرایی تحویل تأسیسات برقی", "فرم تأیید ناظر نهایی"), Note = "صدور گواهی پایان کار برقی منوط به تکمیل موفق کلیه مراحل تست و تحویل است." }
+            );
+        }
+    }
+
+    // --- /about ---------------------------------------------------------------------------
+    // Seeded from the content that used to be hard-coded in web AboutPage.tsx, so the page
+    // looks identical the moment the migration runs and every word becomes editable.
+
+    public class AboutContentConfiguration : IEntityTypeConfiguration<AboutContent>
+    {
+        public void Configure(EntityTypeBuilder<AboutContent> b)
+        {
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id).ValueGeneratedNever();
+            b.Property(e => e.PageTitle).IsRequired();
+            b.HasMany(e => e.Missions).WithOne().HasForeignKey(m => m.AboutContentId).OnDelete(DeleteBehavior.Cascade);
+            b.HasMany(e => e.OrgNodes).WithOne().HasForeignKey(n => n.AboutContentId).OnDelete(DeleteBehavior.Cascade);
+            b.HasMany(e => e.BoardMembers).WithOne().HasForeignKey(m => m.AboutContentId).OnDelete(DeleteBehavior.Cascade);
+            b.HasMany(e => e.Duties).WithOne().HasForeignKey(d => d.AboutContentId).OnDelete(DeleteBehavior.Cascade);
+
+            b.HasData(new AboutContent
+            {
+                Id = LandingSeedIds.About,
+                PageTitle = "درباره دفتر اجرایی",
+                Intro = "دفتر اجرایی نظارت برق، یکی از واحدهای تخصصی سازمان نظام مهندسی ساختمان استان کردستان است که با هدف نظارت بر حسن اجرای پروژه‌های برق ساختمانی و ارتقاء ایمنی تأسیسات الکتریکی در استان فعالیت می‌نماید. این دفتر بر اساس نظام‌نامه مصوب مورخ ۱۳۹۳/۰۵/۰۲ هیئت مدیره سازمان تشکیل شده و فعالیت‌های خود را در چارچوب قوانین و مقررات ملی ساختمان انجام می‌دهد.",
+                MissionsTitle = "اهداف و مأموریت",
+                OrgChartTitle = "ساختار سازمانی",
+                BoardTitle = "هیئت رئیسه",
+                DutiesTitle = "شرح وظایف",
+            });
+        }
+    }
+
+    public class AboutMissionConfiguration : IEntityTypeConfiguration<AboutMission>
+    {
+        public void Configure(EntityTypeBuilder<AboutMission> b)
+        {
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id).ValueGeneratedNever();
+            b.Property(e => e.Title).IsRequired();
+
+            b.HasData(
+                new AboutMission { Id = LandingSeedIds.Mission(1), AboutContentId = LandingSeedIds.About, IconName = "Shield", Title = "نظارت فنی", Description = "نظارت بر حسن اجرای پروژه‌های برق ساختمانی مطابق با مقررات ملی و استانداردهای فنی", SortOrder = 1 },
+                new AboutMission { Id = LandingSeedIds.Mission(2), AboutContentId = LandingSeedIds.About, IconName = "Target", Title = "ارتقاء کیفیت", Description = "ارتقاء کیفیت اجرای کارهای برق و ایمنی تأسیسات الکتریکی در استان کردستان", SortOrder = 2 },
+                new AboutMission { Id = LandingSeedIds.Mission(3), AboutContentId = LandingSeedIds.About, IconName = "BookOpen", Title = "آموزش و توسعه", Description = "آموزش و توانمندسازی کارشناسان و ناظران حوزه برق ساختمان", SortOrder = 3 },
+                new AboutMission { Id = LandingSeedIds.Mission(4), AboutContentId = LandingSeedIds.About, IconName = "Users", Title = "هماهنگی سازمانی", Description = "هماهنگی بین سازمان‌های مرتبط و یکپارچه‌سازی فرآیندهای اجرایی", SortOrder = 4 }
+            );
+        }
+    }
+
+    public class AboutOrgNodeConfiguration : IEntityTypeConfiguration<AboutOrgNode>
+    {
+        public void Configure(EntityTypeBuilder<AboutOrgNode> b)
+        {
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id).ValueGeneratedNever();
+            b.Property(e => e.Title).IsRequired();
+
+            b.HasData(
+                new AboutOrgNode { Id = LandingSeedIds.OrgNode(1), AboutContentId = LandingSeedIds.About, Level = 0, SortOrder = 1, Title = "هیئت مدیره سازمان نظام مهندسی" },
+                new AboutOrgNode { Id = LandingSeedIds.OrgNode(2), AboutContentId = LandingSeedIds.About, Level = 1, SortOrder = 1, Title = "هیئت رئیسه دفتر اجرایی (۳ نفر)" },
+                new AboutOrgNode { Id = LandingSeedIds.OrgNode(3), AboutContentId = LandingSeedIds.About, Level = 2, SortOrder = 1, Title = "مدیر اجرایی" },
+                new AboutOrgNode { Id = LandingSeedIds.OrgNode(4), AboutContentId = LandingSeedIds.About, Level = 2, SortOrder = 2, Title = "نمایندگان شهرستان‌ها" }
+            );
+        }
+    }
+
+    public class AboutBoardMemberConfiguration : IEntityTypeConfiguration<AboutBoardMember>
+    {
+        public void Configure(EntityTypeBuilder<AboutBoardMember> b)
+        {
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id).ValueGeneratedNever();
+            b.Property(e => e.Name).IsRequired();
+
+            b.HasData(
+                new AboutBoardMember { Id = LandingSeedIds.Board(1), AboutContentId = LandingSeedIds.About, Name = "مدیر اجرایی دفتر", Role = "رئیس هیئت رئیسه", Description = "منتخب هیئت مدیره سازمان", SortOrder = 1 },
+                new AboutBoardMember { Id = LandingSeedIds.Board(2), AboutContentId = LandingSeedIds.About, Name = "نماینده هیئت مدیره", Role = "عضو هیئت رئیسه", Description = "نماینده انتصابی هیئت مدیره", SortOrder = 2 },
+                new AboutBoardMember { Id = LandingSeedIds.Board(3), AboutContentId = LandingSeedIds.About, Name = "نماینده مجمع عمومی", Role = "عضو هیئت رئیسه", Description = "منتخب مجمع عمومی", SortOrder = 3 }
+            );
+        }
+    }
+
+    public class AboutDutyConfiguration : IEntityTypeConfiguration<AboutDuty>
+    {
+        public void Configure(EntityTypeBuilder<AboutDuty> b)
+        {
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id).ValueGeneratedNever();
+            b.Property(e => e.Text).IsRequired();
+
+            b.HasData(
+                new AboutDuty { Id = LandingSeedIds.Duty(1), AboutContentId = LandingSeedIds.About, SortOrder = 1, Text = "نظارت بر اجرای صحیح ضوابط و مقررات فنی مربوط به تأسیسات برقی" },
+                new AboutDuty { Id = LandingSeedIds.Duty(2), AboutContentId = LandingSeedIds.About, SortOrder = 2, Text = "بررسی و تأیید صلاحیت کارشناسان برق" },
+                new AboutDuty { Id = LandingSeedIds.Duty(3), AboutContentId = LandingSeedIds.About, SortOrder = 3, Text = "صدور پروانه اشتغال و کنترل کیفیت" },
+                new AboutDuty { Id = LandingSeedIds.Duty(4), AboutContentId = LandingSeedIds.About, SortOrder = 4, Text = "رسیدگی به شکایات و تخلفات" },
+                new AboutDuty { Id = LandingSeedIds.Duty(5), AboutContentId = LandingSeedIds.About, SortOrder = 5, Text = "همکاری با ادارات و سازمان‌های دولتی ذیربط" },
+                new AboutDuty { Id = LandingSeedIds.Duty(6), AboutContentId = LandingSeedIds.About, SortOrder = 6, Text = "برگزاری دوره‌های آموزشی و مهارت‌افزایی" },
+                new AboutDuty { Id = LandingSeedIds.Duty(7), AboutContentId = LandingSeedIds.About, SortOrder = 7, Text = "تهیه و به‌روزرسانی دستورالعمل‌های فنی" },
+                new AboutDuty { Id = LandingSeedIds.Duty(8), AboutContentId = LandingSeedIds.About, SortOrder = 8, Text = "تدوین تعرفه‌های خدمات مهندسی برق" }
             );
         }
     }

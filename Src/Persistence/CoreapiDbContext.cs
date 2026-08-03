@@ -82,6 +82,11 @@ namespace Coreapi.Persistence
         public DbSet<ContactMessage> ContactMessages { get; set; }
         public DbSet<ProcessFlow> ProcessFlows { get; set; }
         public DbSet<ProcessStep> ProcessSteps { get; set; }
+        public DbSet<AboutContent> AboutContents { get; set; }
+        public DbSet<AboutMission> AboutMissions { get; set; }
+        public DbSet<AboutOrgNode> AboutOrgNodes { get; set; }
+        public DbSet<AboutBoardMember> AboutBoardMembers { get; set; }
+        public DbSet<AboutDuty> AboutDuties { get; set; }
 
         //public int OnGetUserBalance(string userId) => throw new NotSupportedException();
 
