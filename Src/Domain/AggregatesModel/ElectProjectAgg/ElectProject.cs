@@ -361,6 +361,11 @@ public class ElectProject
         DefectDes = defectDes;
     }
 
+    public void UpdateDescription(string description)
+    {
+        Description = description;
+    }
+
     public void UpdateDefectByAdmin(string defectDes,bool solveDefectEng)
     {
         IsDefectEng = true;

@@ -10,6 +10,7 @@ using Coreapi.Application.Features.ElectProjects.Commands.AddFile;
 using Coreapi.Application.Features.ElectProjects.Commands.AddPanelMaker;
 using Coreapi.Application.Features.ElectProjects.Commands.AmountSms;
 using Coreapi.Application.Features.ElectProjects.Commands.Defect;
+using Coreapi.Application.Features.ElectProjects.Commands.Description;
 using Coreapi.Application.Features.ElectProjects.Commands.Status;
 using Coreapi.Application.Features.ElectProjects.Commands.SubmitPanel;
 using Coreapi.Application.Features.ElectProjects.Commands.UpdateByEdc;
@@ -126,6 +127,11 @@ namespace Coreapi.Api.Controllers
 
         [HttpPost]
         public async Task<IActionResult> UpdateDefectDes([FromBody] UpdateDefectCommand command) =>
+            Ok(await Mediator.Send(command));
+
+        [HttpPost]
+        [Authorize(Roles = "Administrator, Section")]
+        public async Task<IActionResult> UpdateDescription([FromBody] UpdateDescriptionCommand command) =>
             Ok(await Mediator.Send(command));
 
 
