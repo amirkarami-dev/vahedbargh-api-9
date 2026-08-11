@@ -51,4 +51,23 @@
 		<Folder Include="Upload\Signatures\Executor\" />
 		<Folder Include="Upload\Signatures\Engineer\" />
 	</ItemGroup>
+
+	<!--
+		The production server runs a PATCHED Stimulsoft build (kept at C:\Projects\vahedbargh\stimuldll),
+		which differs from the stock assemblies the NuGet package emits — e.g. Stimulsoft.Base.dll is
+		2,571,264 bytes patched vs 2,590,024 stock. A deploy copies the publish output over the app
+		directory, so shipping the stock DLLs would silently replace the patched reporting engine.
+
+		They are dropped from the publish OUTPUT only. deps.json still lists all 13 as runtime assets,
+		and that is deliberate: the host builds its assembly list from deps.json and resolves them from
+		the app directory, where the patched copies already live. Using ExcludeAssets="runtime" on the
+		package would strip them from deps.json too and break that resolution.
+	-->
+	<Target Name="ExcludeStimulsoftFromPublish" AfterTargets="ComputeFilesToPublish">
+		<ItemGroup>
+			<ResolvedFileToPublish
+				Remove="@(ResolvedFileToPublish)"
+				Condition="$([System.String]::Copy('%(Filename)').StartsWith('Stimulsoft'))" />
+		</ItemGroup>
+	</Target>
 </Project>
