@@ -123,6 +123,22 @@ namespace Coreapi.Persistence.Configurations
         }
     }
 
+    // No HasData: rows arrive from the public form, never from a seed.
+    public class ExpertRequestConfiguration : IEntityTypeConfiguration<ExpertRequest>
+    {
+        public void Configure(EntityTypeBuilder<ExpertRequest> b)
+        {
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id).ValueGeneratedNever();
+            b.Property(e => e.FullName).IsRequired().HasMaxLength(120);
+            b.Property(e => e.MobileNumber).IsRequired().HasMaxLength(20);
+            b.Property(e => e.NaCode).IsRequired().HasMaxLength(10);
+            // The admin inbox lists newest first and filters unread.
+            b.HasIndex(e => e.CreatedAt);
+            b.HasIndex(e => e.IsRead);
+        }
+    }
+
     public class ProcessFlowConfiguration : IEntityTypeConfiguration<ProcessFlow>
     {
         public void Configure(EntityTypeBuilder<ProcessFlow> b)

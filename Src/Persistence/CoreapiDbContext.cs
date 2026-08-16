@@ -87,6 +87,7 @@ namespace Coreapi.Persistence
         public DbSet<AboutOrgNode> AboutOrgNodes { get; set; }
         public DbSet<AboutBoardMember> AboutBoardMembers { get; set; }
         public DbSet<AboutDuty> AboutDuties { get; set; }
+        public DbSet<ExpertRequest> ExpertRequests { get; set; }
 
         //public int OnGetUserBalance(string userId) => throw new NotSupportedException();
 

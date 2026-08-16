@@ -331,6 +331,34 @@ namespace Coreapi.Persistence.Repositories
             foreach (var d in entity.Duties) d.AboutContentId = id;
         }
 
+        public async Task<ExpertRequest> AddExpertRequest(ExpertRequest entity)
+        {
+            context.ExpertRequests.Add(entity);
+            await context.SaveChangesAsync();
+            return entity;
+        }
+
+        public async Task<IEnumerable<ExpertRequest>> GetExpertRequests() =>
+            await context.ExpertRequests.AsNoTracking().OrderByDescending(r => r.CreatedAt).ToListAsync();
+
+        public async Task<bool> MarkExpertRequestRead(Guid id, bool isRead)
+        {
+            var db = await context.ExpertRequests.FirstOrDefaultAsync(r => r.Id == id);
+            if (db is null) return false;
+            db.IsRead = isRead;
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteExpertRequest(Guid id)
+        {
+            var db = await context.ExpertRequests.FirstOrDefaultAsync(r => r.Id == id);
+            if (db is null) return false;
+            context.ExpertRequests.Remove(db);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<ContactMessage> AddContactMessage(ContactMessage message)
         {
             context.ContactMessages.Add(message);

@@ -51,6 +51,12 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         Task<AboutContent> GetAboutContent();
         Task<AboutContent> UpdateAboutContent(AboutContent entity);
 
+        // --- Expert requests (public form -> admin inbox) ---
+        Task<ExpertRequest> AddExpertRequest(ExpertRequest entity);
+        Task<IEnumerable<ExpertRequest>> GetExpertRequests();
+        Task<bool> MarkExpertRequestRead(Guid id, bool isRead);
+        Task<bool> DeleteExpertRequest(Guid id);
+
         // --- Contact messages (admin inbox) ---
         Task<ContactMessage> AddContactMessage(ContactMessage message);
         Task<IEnumerable<ContactMessage>> GetContactMessages();

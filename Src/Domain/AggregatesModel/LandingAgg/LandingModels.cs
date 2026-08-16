@@ -148,6 +148,18 @@ namespace Coreapi.Domain.AggregatesModel.LandingAgg
         public int SortOrder { get; set; }
     }
 
+    // «فرم درخواست کارشناس» — submitted anonymously from the public site, read by an
+    // Administrator in the landing CMS. Same shape of thing as ContactMessage: inbound, never
+    // seeded, with a read/unread flag for the inbox.
+    public class ExpertRequest : BaseModel<Guid>
+    {
+        public string FullName { get; set; }
+        public string MobileNumber { get; set; }
+        public string NaCode { get; set; } // کد ملی
+        public DateTime CreatedAt { get; set; }
+        public bool IsRead { get; set; }
+    }
+
     public class ContactMessage : BaseModel<Guid>
     {
         public string Name { get; set; }
