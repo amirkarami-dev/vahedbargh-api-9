@@ -86,9 +86,16 @@ public class UpsertElectProjectCommandHandler(
         if (request.IsEarthSystem && ertTariff == null)
             throw new NotFoundException("برای پرونده ارت تعرفه ارت وجود ندارد");
 
+        // ElectAdmin and SamtAdmin are both intake roles: they file projects that carry no
+        // building tariff and therefore no computed payment. Must be AND of the negations —
+        // `!A || !B` would be true for anyone lacking *either* role, i.e. everyone, since no
+        // user holds both.
+        var isIntakeRole = currentUser.Role.Contains("ElectAdmin") ||
+                           currentUser.Role.Contains("SamtAdmin");
+
         if (electRequestNumber != 0)
         {
-            if (!currentUser.Role.Contains("ElectAdmin"))
+            if (!isIntakeRole)
                 throw new NotFoundException("کاربری شما مجوز وارد کردن شماره تقاضا را ندارد لطفا ");
             if (electRequestNumber.ToString().Length != 10)
                 throw new NotFoundException("شماره تقاضا باید 10 رقمی باشد");
@@ -287,7 +294,7 @@ public class UpsertElectProjectCommandHandler(
 
 
 
-        if (!currentUser.Role.Contains("ElectAdmin"))
+        if (!isIntakeRole)
         {
             if (buildingTariff is null) throw new NotFoundException("گروه ساختمانی مشخص نیست");
             if (payWithSms <= 0 && (!request.IsTestAndDelivery)) throw new NotFoundException("خطا در محاسبه پرداختی");
