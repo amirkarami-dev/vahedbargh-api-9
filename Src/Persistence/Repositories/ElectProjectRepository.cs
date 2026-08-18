@@ -137,7 +137,10 @@ public class ElectProjectRepository(CoreapiDbContext context)
                 $"%{filterModel.ElectRequestNumber}%"))
 
             .Where(w => filterModel.IdSection == 0 ||
-                        w.IdSection == filterModel.IdSection);
+                        w.IdSection == filterModel.IdSection)
+
+            .Where(w => filterModel.RequesterTypeEnum == null ||
+                        w.RequesterTypeEnum == filterModel.RequesterTypeEnum);
 
         mainModel.CountRow = await baseQuery.CountAsync();
 
@@ -330,7 +333,12 @@ public class ElectProjectRepository(CoreapiDbContext context)
                     HasRelatedPermit = x.HasRelatedPermit,
                     HasSupervision = x.HasSupervision,
                     AreaAsBuilt = x.AreaAsBuilt,
-					NeedElectNetwork = x.NeedElectNetwork
+					NeedElectNetwork = x.NeedElectNetwork,
+					RequesterTypeEnum = x.RequesterTypeEnum,
+					SamtLicenseNumber = x.SamtLicenseNumber,
+					SamtLicenseDate = x.SamtLicenseDate,
+					SamtLicenseExpireDate = x.SamtLicenseExpireDate,
+					SamtIdentityCode = x.SamtIdentityCode
 
 				}
             );

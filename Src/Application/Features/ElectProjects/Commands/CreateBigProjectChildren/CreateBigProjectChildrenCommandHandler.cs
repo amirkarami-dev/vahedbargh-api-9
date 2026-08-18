@@ -155,7 +155,12 @@ public class CreateBigProjectChildrenCommandHandler(
                     false, 0,
                     request.HasRelatedPermit,
                     request.HasSupervision,
-                    areaAsBuiltChild
+                    areaAsBuiltChild,
+                    electProject.RequesterTypeEnum,
+                    electProject.SamtLicenseNumber,
+                    electProject.SamtLicenseDate,
+                    electProject.SamtLicenseExpireDate,
+                    electProject.SamtIdentityCode
                 );
                 childProject.UpdateParentProject(electProject);
                 electProjectRepository.Add(childProject);
@@ -258,7 +263,12 @@ public class CreateBigProjectChildrenCommandHandler(
                     request.IsNeedEb, 0,
                     request.HasRelatedPermit,
                     request.HasSupervision,
-                    0
+                    0,
+                    electProject.RequesterTypeEnum,
+                    electProject.SamtLicenseNumber,
+                    electProject.SamtLicenseDate,
+                    electProject.SamtLicenseExpireDate,
+                    electProject.SamtIdentityCode
                 );
                 childErtProject.UpdateParentProject(electProject);
                 electProjectRepository.Add(childErtProject);

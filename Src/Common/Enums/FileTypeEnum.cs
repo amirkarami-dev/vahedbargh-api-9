@@ -58,7 +58,13 @@ namespace Coreapi.Common.Enums
         [Display(Name = "نقشه ازبیلت")]
         AzbuiltMap = 23,
 		[Display(Name = "افزایش ظرفیت")]
-		ForUpperCapacity = 24
+		ForUpperCapacity = 24,
+		[Display(Name = "پروانه بهره برداری")]
+		SamtLicenseFile = 25,
+		[Display(Name = "وکالت نامه")]
+		SamtLeterOfAttorney = 26,
+		[Display(Name = "نامه صمت به شرکت توزیع")]
+		SamtLetterToElec = 27
 
 	}
 }

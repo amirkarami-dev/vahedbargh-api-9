@@ -31,6 +31,9 @@ namespace Coreapi.Application.Features.ElectProjects.Queries.GetProjectsFullFilt
         public bool IsEarthSystem { get; set; } = false;
         public bool IsTestAndDelivery { get; set; } = false;
         public ElectProjectStatusEnum ElectProjectStatusEnum { get; set; } = ElectProjectStatusEnum.None;
+        // null = no requester filter. It cannot default to 0, because ReqEdc IS 0 and
+        // every pre-Samt project is stored as ReqEdc.
+        public RequesterTypeEnum? RequesterTypeEnum { get; set; }
 
 
     }

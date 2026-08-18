@@ -106,6 +106,12 @@ public class ElectProjectViewModel
     public bool HasSupervision { get; set; }
     public int AreaAsBuilt { get; set; }
 	public bool NeedElectNetwork { get; set; }
+	// صمت fields — null for every non-ReqSamt project.
+	public RequesterTypeEnum RequesterTypeEnum { get; set; }
+	public string SamtLicenseNumber { get; set; }
+	public string SamtLicenseDate { get; set; }
+	public string SamtLicenseExpireDate { get; set; }
+	public string SamtIdentityCode { get; set; }
 
 
 }

@@ -68,6 +68,7 @@ namespace Coreapi.Application.Features.ElectProjects.Queries.GetProjectsFullFilt
                 currentUser.Role.Contains("Elect"),
                 request.Page - 1, 
                 request.PageSize);
+            model.RequesterTypeEnum = request.RequesterTypeEnum;
 
             if (!request.IsBuildingInspection && !request.IsEarthSystem && !request.IsTestAndDelivery)
             {

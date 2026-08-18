@@ -28,7 +28,7 @@ namespace Coreapi.Api.Controllers
 {
     [Authorize]
     [SanitizeInput]
-    [Authorize(Roles = "Administrator, SuperUser, Executor, Engineer, Accountant, Employee, PanelMaker, ElectAdmin, Section")]
+    [Authorize(Roles = "Administrator, SuperUser, Executor, Engineer, Accountant, Employee, PanelMaker, ElectAdmin, Section, SamtAdmin")]
     public class ElectProjectsController : BaseController
     {
         [HttpPost]

@@ -9,5 +9,7 @@ public enum RequesterTypeEnum
     [Display(Name = "شرکت مخابرات")]
     ReqTci,
     [Display(Name = "مالک")]
-    ReqOwner
+    ReqOwner,
+    [Display(Name = "صمت")]
+    ReqSamt
 }

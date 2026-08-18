@@ -121,7 +121,12 @@ public class UpsertElectProjectCommandHandler(
                 request.IsNeedEb,electRequestNumber,
                 request.HasRelatedPermit,
                 request.HasSupervision,
-                request.AreaAsBuilt
+                request.AreaAsBuilt,
+                request.RequesterTypeEnum,
+                request.SamtLicenseNumber,
+                request.SamtLicenseDate,
+                request.SamtLicenseExpireDate,
+                request.SamtIdentityCode
                 );
                 electProjectRepository.Add(electProject);
 

@@ -72,6 +72,8 @@ namespace Coreapi.Common.RequestModel
         public string ParentId { get; set; }
         public bool IsElectRequest { get; set; }
         public ElectProjectStatusEnum ElectProjectStatusEnum { get; set; }
+        // Set by the handler, not the constructor (same escape hatch as ExeName).
+        public RequesterTypeEnum? RequesterTypeEnum { get; set; }
 
     }
 }

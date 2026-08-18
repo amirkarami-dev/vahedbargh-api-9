@@ -51,6 +51,11 @@ namespace Coreapi.Application.Features.ElectProjects.Commands.Upsert
         public bool HasRelatedPermit { get; set; }
         public bool HasSupervision { get; set; }
         public int AreaAsBuilt { get; set; }
+    // صمت licence details — only sent by the CreateProjectFromSamt screen.
+    public string SamtLicenseNumber { get; set; }
+    public string SamtLicenseDate { get; set; }
+    public string SamtLicenseExpireDate { get; set; }
+    public string SamtIdentityCode { get; set; }
 
     }
 }

@@ -34,7 +34,12 @@ public class ElectProject
         long electRequestNumber,
         bool hasRelatedPermit,
         bool hasSupervision,
-        int areaAsBuilt
+        int areaAsBuilt,
+        RequesterTypeEnum requesterTypeEnum,
+        string samtLicenseNumber,
+        string samtLicenseDate,
+        string samtLicenseExpireDate,
+        string samtIdentityCode
         )
     {
         Id = Guid.NewGuid();
@@ -85,6 +90,13 @@ public class ElectProject
         HasRelatedPermit = hasRelatedPermit;
         HasSupervision = hasSupervision;
         AreaAsBuilt = areaAsBuilt;
+        // Was never assigned here, so every project persisted as ReqEdc regardless of
+        // what the caller sent. ReqSamt is the first value that has to survive.
+        RequesterTypeEnum = requesterTypeEnum;
+        SamtLicenseNumber = samtLicenseNumber;
+        SamtLicenseDate = samtLicenseDate;
+        SamtLicenseExpireDate = samtLicenseExpireDate;
+        SamtIdentityCode = samtIdentityCode;
     }
 
     public Guid Id { get; init; }
@@ -108,6 +120,14 @@ public class ElectProject
     public string LandlordPhoneNumber { get; private set; }
     public string CompanyName { get; private set; }
     public string LicenseNumber { get; private set; }
+    // صمت (Ministry of Industry, Mine and Trade) licence details. Only populated for
+    // RequesterTypeEnum.ReqSamt projects; null everywhere else. The two dates are Jalali
+    // strings like SolarRegisterDate — they carry no Julian twin because nothing sorts
+    // or ranges on them yet.
+    public string SamtLicenseNumber { get; set; }
+    public string SamtLicenseDate { get; set; }
+    public string SamtLicenseExpireDate { get; set; }
+    public string SamtIdentityCode { get; set; }
     public string Description { get; private set; }
     public int IdSection { get; private set; }
     public int IdCity { get; set; }
